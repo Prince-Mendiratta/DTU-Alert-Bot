@@ -18,7 +18,7 @@ from pymongo import MongoClient
 from bot import MONGO_URL
 from bot import logging
 
-client = MongoClient(MONGO_URL)
+client = MongoClient("".format(MONGO_URL))
 
 def add_client_to_db(chat_id, f_name, usname):
     # Add user to database
