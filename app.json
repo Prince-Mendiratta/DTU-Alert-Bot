@@ -1,0 +1,53 @@
+{
+  "name": "DTU Alert Bot",
+  "description": "Modular Telegram Bot powered by @PyroGram!",
+  "logo": "https://telegra.ph/file/488fd9b6cf60a08dbceb9.png",
+  "keywords": [
+    "telegram",
+    "bot",
+    "DTU",
+    "Notice",
+    "Alert",
+    "relay",
+    "channel",
+    "administrators"
+  ],
+  "repository": "https://github.com/Dark-Princ3/DTU-Alert-Bot",
+  "website": "https://How2techy.com",
+  "success_url": "#TODO",
+  "env": {
+    "APP_ID": {
+      "description": "Get this value from my.telegram.org!"
+    },
+    "API_HASH": {
+      "description": "Get this value from my.telegram.org!"
+    },
+    "TG_BOT_TOKEN": {
+      "description": "Obtain a Telegram bot token by contacting @BotFather"
+    },
+    "AUTH_CHANNEL": {
+      "description": "List down the user IDs who should have permission to use and reply to users, seperated by SPACE. To get user ids, send /id command to Telegram @OwnErObOT"
+    },
+    "MONGO_URL": {
+      "description": "Get this value from mongodb.com. Make a cluster there and obtain the connection URL"
+    },
+    "START_COMMAND": {
+      "description": "The command user enters to start the bot. Deafult is 'start'.",
+      "value": "start",
+      "required": false
+    },
+    "TZ": {
+      "description": "Specify timezone so that time realted functions work as needed. Know your timezone from http://www.timezoneconverter.com/cgi-bin/findzone.tzc .Default is IST.",
+      "value": "Asia/Kolkata"
+    }
+  },
+  "buildpacks": [{
+    "url": "heroku/python"
+  }],
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "free"
+    }
+  }
+}
