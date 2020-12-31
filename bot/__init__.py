@@ -60,7 +60,7 @@ START_OTHER_USERS_TEXT = get_config(
         "recieve an alert. <i>Send</i> /help <i>for more info.</i>\n\n"
         "Please make sure the bot is unmuted and "
         "notifications are allowed for the app.\n\n"
-        "<b>Last check status-<b>\n{}"
+        "<b>Last check status-</b>\n{}"
     )
 )
 # /help message
