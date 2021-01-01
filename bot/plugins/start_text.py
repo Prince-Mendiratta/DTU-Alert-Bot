@@ -94,5 +94,5 @@ async def tu_ruk_baba_me_dekhta_na(_, message:Message):
 )
 async def ye_dekh_kya_hogaya(_, message: Message):
     await message.reply_document(
-        "{}".format(LOG_FILE_ZZGEVC)
+        "/{}".format(LOG_FILE_ZZGEVC)
     )
