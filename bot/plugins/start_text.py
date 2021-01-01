@@ -43,7 +43,6 @@ que = Queue()
 looped = threading.Timer(int(REQUEST_INTERVAL),get_mod,[Client])
 looped.daemon = True
 looped.start()
-looped.join()
 last_check = que.get()
 
 @Client.on_message(
