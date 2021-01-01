@@ -55,7 +55,7 @@ async def num_start_message(client: Client, message: Message):
         message.from_user.first_name,
         message.from_user.username
     )
-    await client.send_message(chat_id=AUTH_CHANNEL, text="🆕 New User!\nTotal: {}\nName: {}\nUsername: {}".format(total_users,message.from_user.first_name, message.from_user.username))
+    await client.send_message(chat_id=AUTH_CHANNEL, text="🆕 New User!\nTotal: {}\nName: {}\nUsername: @{}".format(total_users,message.from_user.first_name, message.from_user.username))
 
 
 @Client.on_message(
