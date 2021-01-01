@@ -43,7 +43,7 @@ get_mod(Client)
     filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
     ~uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
-async def num_start_message(_, message: Message):
+async def num_start_message(client: Client, message: Message):
     with open("bot/plugins/check.txt", "r") as f:
         last_check = f.read()
     await message.reply_text(
@@ -62,7 +62,7 @@ async def num_start_message(_, message: Message):
     filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
     uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
-async def nimda_start_message(_, message: Message):
+async def nimda_start_message(client: Client, message: Message):
     with open("bot/plugins/check.txt", "r") as f:
         last_check = f.read()
     total_users = add_client_to_db(
