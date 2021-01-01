@@ -48,7 +48,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 Go to [@Rose](https://telegram.dog/MissRose_bot), send /id in the chat to get this value.
 
 * `MONGO_URL`: You can get this value by creating a cluster on [MongoDB](https://mongodb.com) and getting the connection url.
-__Note__ You MUST enter 0.0.0.0/0 in the allowed ip addresses range in your cluster.
+- __Note__ You MUST enter 0.0.0.0/0 in the allowed ip addresses range in your cluster.
 
 #### Optional Environment Variables
 
