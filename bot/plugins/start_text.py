@@ -34,7 +34,7 @@ from bot import (
 )
 from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import add_client_to_db
-from .broadcast import get_mod, check_status, last_check
+from .broadcast import get_mod, check_status
 from bot import logging
 
 last_check = get_mod(Client)
