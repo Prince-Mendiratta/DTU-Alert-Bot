@@ -37,7 +37,8 @@ from bot.mongodb.users import user_list, remove_client_from_db
 from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden
 from bot import logging
-from .start_text import last_check
+
+global last_check
 
 
 def get_mod(client: Client):
