@@ -30,10 +30,11 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 #### The Legacy Way
 
 - if you want to run this bot in your GNU/Linux System,
-- `mv sample_config.env config.env`
-- Edit the `config.env` with the appropriate values.
-- Read below, to understand what the configuration variables does.
-- Run `python3 -m bot`.
+- `cd code_directory`
+- Enter `python3 setup.py`
+- Enter the 'mandatory' environment variables as prompted
+- Once setup is done, enter `python3 -m bot`
+- To enter optional variables, copy the key from sample_config.env and paste in config.env .
 
 ## ENVironment VARiables
 
