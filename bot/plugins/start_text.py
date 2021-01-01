@@ -50,11 +50,12 @@ async def num_start_message(_, message: Message):
         START_OTHER_USERS_TEXT.format(last_check),
         quote=True
     )
-    add_client_to_db(
+    total_users = add_client_to_db(
         message.from_user.id,
         message.from_user.first_name,
         message.from_user.username
     )
+    await client.send_message(chat_id=AUTH_CHANNEL, text="🆕 New User!\nTotal: {}\nName: {}\nUsername: {}".format(total_users,message.from_user.first_name, message.from_user.username))
 
 
 @Client.on_message(
