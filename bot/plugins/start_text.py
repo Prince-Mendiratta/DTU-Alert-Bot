@@ -36,10 +36,10 @@ from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import add_client_to_db
 from .broadcast import get_mod, check_status
 from bot import logging
-import queue
+import Queue
 
 
-que = Queue.Queue()
+que = Queue()
 looped = threading.Timer(int(REQUEST_INTERVAL),get_mod,[Client])
 looped.daemon = True
 looped.start()
