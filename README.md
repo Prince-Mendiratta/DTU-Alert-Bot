@@ -32,7 +32,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 - Check the Mandatory Environment Variables given below and get their values.
 - Download [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en_IN&gl=US) application from Play Store.
 - Open Termux and enter `termux-setup-storage`. Allow Storage permissions.
-- Enter `pkg install python git`.
+- Enter `pkg install python git libxml2 libxslt clang`.
 - Enter `python3 -m venv venv`.
 - Enter `. ./venv/bin/activate`.
 - Enter `cd /sdcard`.
