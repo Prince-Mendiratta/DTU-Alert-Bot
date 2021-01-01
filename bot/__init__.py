@@ -55,25 +55,25 @@ START_OTHER_USERS_TEXT = get_config(
         "Thank you for using me 😬\n\n"
         "This is an Open Source Project available on "
         "https://github.com/Dark-Princ3/DTU-Alert-Bot\n\n"
-        "You are <b>subscribed for notifications</b>, "
+        "🔔 You are <b>subscribed for notifications</b>, "
         "In case of any new notice on DTU Website, you'll "
         "recieve an alert. <i>Send</i> /help <i>for more info.</i>\n\n"
-        "Please make sure the bot is unmuted and "
+        "⚠️ Please make sure the bot is unmuted and "
         "notifications are allowed for the app.\n\n"
-        "<b>Last check status-<b>\n{}"
+        "🔱 <b>Last check status-</b>\n{}"
     )
 )
 # /help message
 HELP_MEHH = get_config(
     "HELP_MEHH",
     (
-        "This is free open source project developed by @anubisxx "
+        "⭕️ This is free open source project developed by @anubisxx "
         "to help get those important notices first.\n"
-        "This bot uses the Notice's <i>uploaded date</i> and cross-checks "
+        "😲 This bot uses the Notice's <i>uploaded date</i> and cross-checks "
         "with records to determine if the site has been updated.\n\n"
-        "<b>Please unmute the bot and allow notifications for the app.</b>\n"
+        "⚠️<b> Please unmute the bot and allow notifications for the app.</b>\n"
         "Send /status to check if the alerts work properly!\n\n"
-        "The bot will send alerts <b>twice</b> in case of an update. "
+        "🔔 The bot will send alerts <b>twice</b> in case of an update. "
         "If you want to unsubscribe, simple block the bot."
     )
 )
@@ -81,13 +81,18 @@ HELP_MEHH = get_config(
 ONLINE_CHECK_START_TEXT = get_config(
     "ONLINE_CHECK_START_TEXT",
     (
-        "I am online, <b>master</b>\n\n"
-        "Current Users - {}\n"
-        "Last check status - \n{}"
+        "👾 I am online, <b>master</b>\n\n"
+        "<b>Current Users</b> - {}\n\n"
+        "<b>Last check status</b> - \n{}"
     )
 )
+# Interval between each check
+REQUEST_INTERVAL = get_config(
+    "REQUEST_INTERVAL",
+    300
+)
 # path to store LOG files
-LOG_FILE_ZZGEVC = get_config("LOG_FILE_ZZGEVC", "DTUAlertBot.log")
+LOG_FILE_ZZGEVC = get_config("LOG_FILE_ZZGEVC", "bot/DTUAlertBot.log")
 # Ensure Timezone is IST
 TZ = get_config(
     "TZ",

@@ -1,6 +1,6 @@
 # DTU Notice Alert Bot
 
-Need to be informed of notices which are being uploaded on [DTU's official website](https://dtu.ac.in) but can't be bothered to keep checking the website regularly? Same. Thus, this bot is here to help you! Simply visit and check out [@DTUAlertBot](https://telegram.dog/DTUAlertBot) to get subscribed for notifications in case of an update on your phone itself! 
+Need to be informed of notices which are being uploaded on [Delhi Technological University(DTU) official website](https://dtu.ac.in) but can't be bothered to keep checking the website regularly? Same. Thus, this bot is here to help you! Simply visit and check out [@DTUAlertBot](https://telegram.dog/DTUAlertBot) on [Telegram](https://telegram.org/) to get subscribed for notifications in case of an update on your phone itself! 
 
 * Please make sure the bot is unmuted and telegram app is allowed to send notification for the bot to function as required!
 
@@ -27,13 +27,30 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 * Make sure to read below what the configuration variables do.
 
+#### On an Android Device
+
+- Check the Mandatory Environment Variables given below and get their values.
+- Download [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en_IN&gl=US) application from Play Store.
+- Open Termux and enter `termux-setup-storage`. Allow Storage permissions.
+- Enter `pkg install python git libxml2 libxslt clang`.
+- Enter `python3 -m venv venv`.
+- Enter `. ./venv/bin/activate`.
+- Enter `cd /sdcard`.
+- Enter `git clone https://github.com/Dark-Princ3/DTU-Alert-Bot`.
+- Enter `cd DTU-Alert-Bot`.
+- Enter `python3 setup.py`.
+- Enter the 'mandatory' environment variables as prompted.
+- Once setup is done, enter `python3 -m bot`.
+- To enter optional variables, copy the key from sample_config.env and paste in config.env.
+
 #### The Legacy Way
 
 - if you want to run this bot in your GNU/Linux System,
-- `mv sample_config.env config.env`
-- Edit the `config.env` with the appropriate values.
-- Read below, to understand what the configuration variables does.
-- Run `python3 -m bot`.
+- `cd code_directory`
+- Enter `python3 setup.py`
+- Enter the 'mandatory' environment variables as prompted
+- Once setup is done, enter `python3 -m bot`
+- To enter optional variables, copy the key from sample_config.env and paste in config.env.
 
 ## ENVironment VARiables
 
@@ -48,6 +65,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 Go to [@Rose](https://telegram.dog/MissRose_bot), send /id in the chat to get this value.
 
 * `MONGO_URL`: You can get this value by creating a cluster on [MongoDB](https://mongodb.com) and getting the connection url.
+- __Note__ You MUST enter 0.0.0.0/0 in the allowed ip addresses range in your cluster.
 
 #### Optional Environment Variables
 

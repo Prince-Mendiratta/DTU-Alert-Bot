@@ -28,37 +28,47 @@ from bot import (
     ONLINE_CHECK_START_TEXT,
     START_COMMAND,
     START_OTHER_USERS_TEXT,
+    LOG_FILE_ZZGEVC,
+    REQUEST_INTERVAL,
     HELP_MEHH
 )
 from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import add_client_to_db
 from .broadcast import get_mod, check_status
 from bot import logging
+from bot.__banner.banner import bannerTop
 
+banner = bannerTop()
+logging.info("\n{}".format(banner))
 
-last_check = get_mod(Client)
+get_mod(Client)
 
 @Client.on_message(
     filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
     ~uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
-async def num_start_message(_, message: Message):
+async def num_start_message(client: Client, message: Message):
+    with open("bot/plugins/check.txt", "r") as f:
+        last_check = f.read()
     await message.reply_text(
         START_OTHER_USERS_TEXT.format(last_check),
         quote=True
     )
-    add_client_to_db(
+    total_users = add_client_to_db(
         message.from_user.id,
         message.from_user.first_name,
         message.from_user.username
     )
+    await client.send_message(chat_id=AUTH_CHANNEL, text="🆕 New User!\nTotal: {}\nName: {}\nUsername: @{}".format(total_users,message.from_user.first_name, message.from_user.username), disable_notification=True)
 
 
 @Client.on_message(
     filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
     uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
-async def nimda_start_message(_, message: Message):
+async def nimda_start_message(client: Client, message: Message):
+    with open("bot/plugins/check.txt", "r") as f:
+        last_check = f.read()
     total_users = add_client_to_db(
         message.from_user.id,
         message.from_user.first_name,
@@ -86,5 +96,5 @@ async def tu_ruk_baba_me_dekhta_na(_, message:Message):
 )
 async def ye_dekh_kya_hogaya(_, message: Message):
     await message.reply_document(
-        "DTU-Alert-Bot.log"
+        "{}".format(LOG_FILE_ZZGEVC)
     )

@@ -36,9 +36,14 @@
       "value": "start",
       "required": false
     },
+    "REQUEST_INTERVAL": {
+      "description": "Time interval between each check. Default is 300 seconds/ 5 minutes.",
+      "value": "300"
+    },
     "TZ": {
       "description": "Specify timezone so that time realted functions work as needed. Know your timezone from http://www.timezoneconverter.com/cgi-bin/findzone.tzc .Default is IST.",
-      "value": "Asia/Kolkata"
+      "value": "Asia/Kolkata",
+      "required": false
     }
   },
   "buildpacks": [{

@@ -48,7 +48,7 @@ def request_time(client: Client):
     top_link = 'dtu.ac.in' + top_link
     dates = {}
     recorded_dates = {}
-    for i in range(1,6):
+    for i in range(1,8):
         try:
             date_text = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[{}]/small/em/i/text()'.format(i))
             if date_text != []:
