@@ -36,7 +36,7 @@ from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import add_client_to_db
 from .broadcast import get_mod, check_status
 from bot import logging
-from queue import queue
+import queue
 
 
 que = Queue()
