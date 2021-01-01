@@ -27,6 +27,22 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 * Make sure to read below what the configuration variables do.
 
+#### On an Android Device
+
+- Check the Mandatory Environment Variables given below and get their values.
+- Download [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en_IN&gl=US) application from Play Store.
+- Open Termux and enter `termux-setup-storage`. Allow Storage permissions.
+- Enter `pkg install python git`.
+- Enter `python3 -m venv venv`.
+- Enter `. ./venv/bin/activate`.
+- Enter `cd /sdcard`.
+- Enter `git clone https://github.com/Dark-Princ3/DTU-Alert-Bot`.
+- Enter `cd DTU-Alert-Bot`.
+- Enter `python3 setup.py`.
+- Enter the 'mandatory' environment variables as prompted.
+- Once setup is done, enter `python3 -m bot`.
+- To enter optional variables, copy the key from sample_config.env and paste in config.env.
+
 #### The Legacy Way
 
 - if you want to run this bot in your GNU/Linux System,
@@ -34,7 +50,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 - Enter `python3 setup.py`
 - Enter the 'mandatory' environment variables as prompted
 - Once setup is done, enter `python3 -m bot`
-- To enter optional variables, copy the key from sample_config.env and paste in config.env .
+- To enter optional variables, copy the key from sample_config.env and paste in config.env.
 
 ## ENVironment VARiables
 
