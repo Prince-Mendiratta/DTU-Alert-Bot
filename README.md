@@ -1,6 +1,6 @@
 # DTU Notice Alert Bot
 
-Need to be informed of notices which are being uploaded on [DTU's official website](https://dtu.ac.in) but can't be bothered to keep checking the website regularly? Same. Thus, this bot is here to help you! Simply visit and check out [@DTUAlertBot](https://telegram.dog/DTUAlertBot) to get subscribed for notifications in case of an update on your phone itself! 
+Need to be informed of notices which are being uploaded on [DTU's official website](https://dtu.ac.in) but can't be bothered to keep checking the website regularly? Same. Thus, this bot is here to help you! Simply visit and check out [@DTUAlertBot](https://telegram.dog/DTUAlertBot) on [Telegram](https://telegram.org/) to get subscribed for notifications in case of an update on your phone itself! 
 
 * Please make sure the bot is unmuted and telegram app is allowed to send notification for the bot to function as required!
 
