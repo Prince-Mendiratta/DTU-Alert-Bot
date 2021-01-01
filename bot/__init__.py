@@ -92,7 +92,7 @@ REQUEST_INTERVAL = get_config(
     300
 )
 # path to store LOG files
-LOG_FILE_ZZGEVC = get_config("LOG_FILE_ZZGEVC", "DTUAlertBot.log")
+LOG_FILE_ZZGEVC = get_config("LOG_FILE_ZZGEVC", "bot/DTUAlertBot.log")
 # Ensure Timezone is IST
 TZ = get_config(
     "TZ",
