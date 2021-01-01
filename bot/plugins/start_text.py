@@ -38,15 +38,14 @@ from .broadcast import get_mod, check_status
 from bot import logging
 
 get_mod(Client)
-with open("bot/plugins/check.txt", "r") as f:
-    last_check = f.read()
-    print(last_check)
 
 @Client.on_message(
     filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
     ~uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
 async def num_start_message(_, message: Message):
+    with open("bot/plugins/check.txt", "r") as f:
+        last_check = f.read()
     await message.reply_text(
         START_OTHER_USERS_TEXT.format(last_check),
         quote=True
@@ -63,6 +62,8 @@ async def num_start_message(_, message: Message):
     uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
 async def nimda_start_message(_, message: Message):
+    with open("bot/plugins/check.txt", "r") as f:
+        last_check = f.read()
     total_users = add_client_to_db(
         message.from_user.id,
         message.from_user.first_name,
