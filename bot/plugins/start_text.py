@@ -39,7 +39,7 @@ from bot import logging
 import queue
 
 
-que = Queue()
+que = Queue.Queue()
 looped = threading.Timer(int(REQUEST_INTERVAL),get_mod,[Client])
 looped.daemon = True
 looped.start()
