@@ -37,6 +37,8 @@ from bot.mongodb.users import add_client_to_db
 from .broadcast import get_mod, check_status
 from bot import logging
 
+global last_check
+
 last_check = get_mod(Client)
 
 @Client.on_message(
