@@ -38,12 +38,7 @@ from .broadcast import get_mod, check_status
 from bot import logging
 from queue import Queue
 
-
-que = Queue()
-looped = threading.Timer(int(REQUEST_INTERVAL),get_mod,[Client])
-looped.daemon = True
-looped.start()
-last_check = que.get()
+last_check = get_mod(Client)
 
 @Client.on_message(
     filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
