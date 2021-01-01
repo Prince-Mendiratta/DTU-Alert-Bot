@@ -38,8 +38,6 @@ from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden
 from bot import logging
 
-global last_check
-
 
 def get_mod(client: Client):
     status, top_notice, top_link = request_time(Client)
@@ -73,11 +71,13 @@ def get_mod(client: Client):
         done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
         logging.critical(done)
         sendtelegram(3 ,AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done)
-    last_check = mes2
+    with open("bot/plugins/check.txt", "w+") as f:
+        f.write(mes2)
+        f.close()
     looped = threading.Timer(int(REQUEST_INTERVAL),lambda: get_mod(Client))
     looped.daemon = True
     looped.start()
-    return last_check
+    return mes2
 
 
 def getDocId(notice):
