@@ -44,7 +44,6 @@ last_check = get_mod(Client)
     ~uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
 async def num_start_message(_, message: Message):
-    last_check = get_mod(Client)
     await message.reply_text(
         START_OTHER_USERS_TEXT.format(last_check),
         quote=True
@@ -61,7 +60,6 @@ async def num_start_message(_, message: Message):
     uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
 async def nimda_start_message(_, message: Message):
-    last_check = get_mod(Client)
     total_users = add_client_to_db(
         message.from_user.id,
         message.from_user.first_name,
