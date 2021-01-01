@@ -37,7 +37,6 @@ from bot.mongodb.users import user_list, remove_client_from_db
 from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden
 from bot import logging
-from queue import Queue
 
 
 def get_mod(client: Client):
@@ -72,12 +71,9 @@ def get_mod(client: Client):
         done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
         logging.critical(done)
         sendtelegram(3 ,AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done)
-    que = Queue()
     looped = threading.Timer(int(REQUEST_INTERVAL),get_mod,[Client])
     looped.daemon = True
     looped.start()
-    result = que.get()
-    print(result)
     return mes2
 
 
