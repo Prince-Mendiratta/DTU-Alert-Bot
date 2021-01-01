@@ -71,6 +71,9 @@ def get_mod(client: Client):
         done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
         logging.critical(done)
         sendtelegram(3 ,AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done)
+    looped = threading.Timer(int(REQUEST_INTERVAL),get_mod,[Client])
+    looped.daemon = True
+    looped.start()
     return mes2
 
 
