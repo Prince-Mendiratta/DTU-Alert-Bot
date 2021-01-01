@@ -28,6 +28,7 @@ from bot import (
     ONLINE_CHECK_START_TEXT,
     START_COMMAND,
     START_OTHER_USERS_TEXT,
+    LOG_FILE_ZZGEVC,
     HELP_MEHH
 )
 from bot.hf.flifi import uszkhvis_chats_ahndler
@@ -43,6 +44,7 @@ last_check = get_mod(Client)
     ~uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
 async def num_start_message(_, message: Message):
+    last_check = get_mod(Client)
     await message.reply_text(
         START_OTHER_USERS_TEXT.format(last_check),
         quote=True
@@ -59,6 +61,7 @@ async def num_start_message(_, message: Message):
     uszkhvis_chats_ahndler([AUTH_CHANNEL])
 )
 async def nimda_start_message(_, message: Message):
+    last_check = get_mod(Client)
     total_users = add_client_to_db(
         message.from_user.id,
         message.from_user.first_name,
@@ -86,5 +89,5 @@ async def tu_ruk_baba_me_dekhta_na(_, message:Message):
 )
 async def ye_dekh_kya_hogaya(_, message: Message):
     await message.reply_document(
-        "./DTU-Alert-Bot.log"
+        "str({})".format(LOG_FILE_ZZGEVC)
     )
