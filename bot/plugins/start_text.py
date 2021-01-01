@@ -29,15 +29,22 @@ from bot import (
     START_COMMAND,
     START_OTHER_USERS_TEXT,
     LOG_FILE_ZZGEVC,
+    REQUEST_INTERVAL,
     HELP_MEHH
 )
 from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import add_client_to_db
 from .broadcast import get_mod, check_status
 from bot import logging
+from queue import queue
 
 
-last_check = get_mod(Client)
+que = Queue()
+looped = threading.Timer(int(REQUEST_INTERVAL),get_mod,[Client])
+looped.daemon = True
+looped.start()
+looped.join()
+last_check = que.get()
 
 @Client.on_message(
     filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
