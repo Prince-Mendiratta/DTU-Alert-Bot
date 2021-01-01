@@ -37,7 +37,10 @@ from bot.mongodb.users import add_client_to_db
 from .broadcast import get_mod, check_status
 from bot import logging
 
-last_check = get_mod(Client)
+get_mod(Client)
+with open("bot/plugins/check.txt", "r") as f:
+    last_check = f.read()
+    print(last_check)
 
 @Client.on_message(
     filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
