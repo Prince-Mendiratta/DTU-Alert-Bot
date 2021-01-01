@@ -36,7 +36,6 @@ from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import add_client_to_db
 from .broadcast import get_mod, check_status
 from bot import logging
-from queue import Queue
 
 last_check = get_mod(Client)
 
@@ -88,5 +87,5 @@ async def tu_ruk_baba_me_dekhta_na(_, message:Message):
 )
 async def ye_dekh_kya_hogaya(_, message: Message):
     await message.reply_document(
-        "/{}".format(LOG_FILE_ZZGEVC)
+        '"/{}"'.format(LOG_FILE_ZZGEVC)
     )
