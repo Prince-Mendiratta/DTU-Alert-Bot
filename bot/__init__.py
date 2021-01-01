@@ -86,6 +86,11 @@ ONLINE_CHECK_START_TEXT = get_config(
         "Last check status - \n{}"
     )
 )
+# Interval between each check
+REQUEST_INTERVAL = get_config(
+    "REQUEST_INTERVAL",
+    "1200"
+)
 # path to store LOG files
 LOG_FILE_ZZGEVC = get_config("LOG_FILE_ZZGEVC", "DTUAlertBot.log")
 # Ensure Timezone is IST
