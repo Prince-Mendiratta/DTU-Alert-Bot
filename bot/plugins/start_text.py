@@ -39,7 +39,7 @@ from bot import logging
 from bot.__banner.banner import bannerTop
 
 banner = bannerTop()
-print(banner)
+logging.info("\n{}".format(banner))
 
 get_mod(Client)
 
