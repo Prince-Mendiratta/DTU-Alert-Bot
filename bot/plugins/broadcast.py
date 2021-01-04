@@ -54,18 +54,20 @@ def get_mod(client: Client):
             for i in range(0,(total)):
                 try:
                     pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),top_notice)
-                    sendtelegram(1, broadcast_list[i], files_id, pp)
-                    i += 1
-                    logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
-                    time.sleep(2)
-                except (UserIsBlocked, ChatWriteForbidden):
-                    logging.info("[*] User has Blocked the bot.")
-                    failed += 1
-                    i += 1
-                    remove_client_from_db(broadcast_list[i])
-                    time.sleep(2)
+                    send_status = sendtelegram(1, broadcast_list[i], files_id, pp)
+                    if send_status == 200:
+                        i += 1
+                        logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
+                        time.sleep(0.5)
+                    elif send_status == 404:
+                        failed += 1
+                        i += 1
+                        remove_client_from_db(broadcast_list[i])
+                        time.sleep(0.3)
+                except Exception as e:
+                    logging.error("[*] {}".format(e))
             alerts += 1
-            time.sleep(5)
+            time.sleep(1)
         os.remove("bot/hf/recorded_status.json")
         time.sleep(2)
         done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
@@ -92,10 +94,11 @@ def getDocId(notice):
             })
         if r.status_code == 200 and r.json()["ok"]:
             doc_file_id = r.json()['result']['document']['file_id']
+            return doc_file_id
     except:
         logging.info("[*] [{}]: Could not send telegram message.".format(datetime.now()))
         doc_file_id = 0
-    return doc_file_id
+        return doc_file_id
 
 
 def sendtelegram(tipe, user_id, notice, caption):
@@ -125,11 +128,12 @@ def sendtelegram(tipe, user_id, notice, caption):
             "https://api.telegram.org/bot{}/send{}".format(token,handler),
             params=pramas)
         if r.status_code == 200 and r.json()["ok"]:
-            return
-        raise Exception
+            return 200
     except Exception as e:
         print(e)
         logging.info("[*] Could not send telegram message.")
+        return 404
+    
 
 def check_status(user_id, usname):
     sendtelegram(2, user_id, '_', "Sending an alert in 5 seconds!\nPlease minimize the app if you want to check notification settings.")
