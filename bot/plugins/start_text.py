@@ -54,12 +54,13 @@ async def num_start_message(client: Client, message: Message):
         START_OTHER_USERS_TEXT.format(last_check),
         quote=True
     )
-    total_users = add_client_to_db(
+    add_status, total_users = add_client_to_db(
         message.from_user.id,
         message.from_user.first_name,
         message.from_user.username
     )
-    await client.send_message(chat_id=AUTH_CHANNEL, text="🆕 New User!\nTotal: {}\nName: {}\nUsername: @{}".format(total_users,message.from_user.first_name, message.from_user.username), disable_notification=True)
+    if add_status == 1:
+        await client.send_message(chat_id=AUTH_CHANNEL, text="🆕 New User!\nTotal: {}\nName: {}\nUsername: @{}".format(total_users,message.from_user.first_name, message.from_user.username), disable_notification=True)
 
 
 @Client.on_message(
