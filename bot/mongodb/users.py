@@ -31,14 +31,16 @@ def add_client_to_db(chat_id, f_name, usname):
         "Username" : "{}".format(usname)
     }
     mm = mydb.users.count_documents({"Chat Id" : "{}".format(chat_id)})
+    add_status = 0
     if mm == 0:
         mycol.insert_one(mydict)
         logging.info("[*] New user, {} added!".format(usname))
+        add_status = 1
     else:
-        pass
+        add_status = 0
     total_users = len(mycol.distinct("Chat Id"))
     client.close()
-    return total_users
+    return add_status, total_users
 
 def user_list():
     mydb = client.dtu
