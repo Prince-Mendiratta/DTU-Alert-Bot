@@ -40,12 +40,12 @@ from bot import logging
 
 
 def get_mod(client: Client):
-    status, top_notice, top_link = request_time(Client)
-    mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),top_notice)
-    if status == 404:
+    req_result = request_time(Client)
+    mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),req_result[1])
+    if req_result[0] == 404:
         logging.info("[*] DTU Website has not been Updated.")
-    elif status == 200:
-        files_id = getDocId(top_link)
+    elif req_result[0] == 200:
+        files_id = getDocId(req_result[4])
         broadcast_list = user_list()
         total = len(broadcast_list)
         alerts = 0
@@ -53,12 +53,12 @@ def get_mod(client: Client):
             failed = 0
             for i in range(0,(total)):
                 try:
-                    pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),top_notice)
+                    pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),req_result[3],req_result[5])
                     send_status = sendtelegram(1, broadcast_list[i], files_id, pp)
                     if send_status == 200:
                         i += 1
                         logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
-                        time.sleep(0.5)
+                        time.sleep(0.3)
                     elif send_status == 404:
                         failed += 1
                         i += 1
@@ -76,9 +76,13 @@ def get_mod(client: Client):
     with open("bot/plugins/check.txt", "w+") as f:
         f.write(mes2)
         f.close()
-    looped = threading.Timer(int(REQUEST_INTERVAL),lambda: get_mod(Client))
-    looped.daemon = True
-    looped.start()
+    try:
+        looped = threading.Timer(int(REQUEST_INTERVAL),lambda: get_mod(Client))
+        looped.daemon = True
+        looped.start()
+    except Exception as e:
+        logging.critical(e)
+        sendtelegram(2 ,AUTH_CHANNEL, "_", e)
     return mes2
 
 
@@ -95,7 +99,10 @@ def getDocId(notice):
         if r.status_code == 200 and r.json()["ok"]:
             doc_file_id = r.json()['result']['document']['file_id']
             return doc_file_id
-    except:
+        else:
+            raise Exception
+    except Exception as e:
+        logging.error(e)
         logging.info("[*] [{}]: Could not send telegram message.".format(datetime.now()))
         doc_file_id = 0
         return doc_file_id
@@ -140,7 +147,7 @@ def sendtelegram(tipe, user_id, notice, caption):
 def check_status(user_id, usname):
     sendtelegram(2, user_id, '_', "Sending an alert in 5 seconds!\nPlease minimize the app if you want to check notification settings.")
     time.sleep(6)
-    fbi, top_notice, top_link = request_time(Client)
-    sendtelegram(2, user_id, '_', '[*] Last Check - [{}]\nLast Notice - \n{}\nHave a Look - {}'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), top_notice, top_link))
+    req_result = request_time(Client)
+    sendtelegram(2, user_id, '_', '[*] Last Check - [{}]\nLast Notice - \n{}\nHave a Look - {}'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1], req_result[2]))
     logging.info("[*] {} requested for a status update!".format(usname))
 

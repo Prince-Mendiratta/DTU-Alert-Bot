@@ -48,30 +48,53 @@ def request_time(client: Client):
     top_link = 'dtu.ac.in' + top_link
     dates = {}
     recorded_dates = {}
-    for i in range(1,8):
-        try:
-            date_text = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[{}]/small/em/i/text()'.format(i))
-            if date_text != []:
-                dates["Date%s" %i] = date_text
-                if not path.exists("bot/hf/recorded_status.json"):
-                    recorded_dates["Date%s" %i] = date_text
+    tabs = 1
+    while tabs < 9:
+        for i in range(1,8):
+            try:
+                date_text = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/small/em/i/text()'.format(tabs,i))
+                if date_text != []:
+                    dates["Date.{}.{}".format(tabs,i)] = date_text
+                    if not os.path.exists("recorded_status.json"):
+                        recorded_dates["Date.{}.{}".format(tabs,i)] = date_text
+                    i = i + 1
+                else:
+                    i = i + 1
+            except Exception as e:
+                print(e)
                 i = i + 1
-            else:
-                i = i + 1
-        except Exception as e:
-            print(e)
-            i = i + 1
+        tabs+=1
     if not path.exists("bot/hf/recorded_status.json"):
         data = json.dumps(recorded_dates)
         with open("bot/hf/recorded_status.json", "w+") as f:
             f.write(data)
             print("[*] Recorded Current Status.\n[*] Latest dates: {}".format(data))
+            return_values = [404, top_notice[0], top_link, ' ', ' ']
+            return return_values
     else:
         with open("bot/hf/recorded_status.json", "r") as f:
             data = f.read()
         recorded_dates = json.loads(data)
+        modified_key = dict_compare(recorded_dates, dates)
+        if modified_key != []:
+            Tab = ['.', 'Notices', 'Jobs', 'Tenders', 'Latest News', 'Forthcoming Events', 'Press Release', '-', '1st Year Notices']
+            temp, tab, link = modified_key[0].split('.')
+            new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/text()'.format(tab,link))[0]
+            new_link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/@href'.format(tab,link))[0]
+            new_link = new_link.split('.',1)[1]
+            new_link = 'dtu.ac.in' + new_link
+            Tab = Tab[int(tab)]
+            return_values = [200, top_notice[0], top_link, new_notice, new_link, Tab]
+            return return_values
+        else:
+            return_values = [404, top_notice[0], top_link, ' ', ' ']
+            return return_values
+            
     
-    if recorded_dates != dates:
-        return 200, top_notice[0], top_link
-    else:
-        return 404, top_notice[0], top_link
+
+def dict_compare(d1, d2):
+    d1_keys = set(d1.keys())
+    d2_keys = set(d2.keys())
+    shared_keys = d1_keys.intersection(d2_keys)
+    modified = {o : (d1[o], d2[o]) for o in shared_keys if d1[o] != d2[o]}
+    return (sorted(list(modified.keys())))

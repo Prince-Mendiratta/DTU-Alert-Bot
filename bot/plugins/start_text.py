@@ -79,23 +79,3 @@ async def nimda_start_message(client: Client, message: Message):
         ONLINE_CHECK_START_TEXT.format(total_users,last_check),
         quote=True
     )
-
-@Client.on_message(filters.command("help", COMMM_AND_PRE_FIX))
-async def get_this_man_some_help(_, message: Message):
-    await message.reply_text(
-        HELP_MEHH,
-        quote=True
-    )
-
-@Client.on_message(filters.command("status", COMMM_AND_PRE_FIX))
-async def tu_ruk_baba_me_dekhta_na(_, message:Message):
-    check_status(message.from_user.id, message.from_user.username)
-
-@Client.on_message(
-    filters.command('logs', COMMM_AND_PRE_FIX) &
-    uszkhvis_chats_ahndler([AUTH_CHANNEL])
-)
-async def ye_dekh_kya_hogaya(_, message: Message):
-    await message.reply_document(
-        "{}".format(LOG_FILE_ZZGEVC)
-    )
