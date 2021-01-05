@@ -99,7 +99,10 @@ def getDocId(notice):
         if r.status_code == 200 and r.json()["ok"]:
             doc_file_id = r.json()['result']['document']['file_id']
             return doc_file_id
-    except:
+        else:
+            raise Exception
+    except Exception as e:
+        logging.error(e)
         logging.info("[*] [{}]: Could not send telegram message.".format(datetime.now()))
         doc_file_id = 0
         return doc_file_id
