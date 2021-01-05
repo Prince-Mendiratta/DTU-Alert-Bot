@@ -29,7 +29,8 @@ from pyrogram.types import (
 from bot import (
     AUTH_CHANNEL,
     REQUEST_INTERVAL,
-    TG_BOT_TOKEN
+    TG_BOT_TOKEN,
+    MONGO_URL
 )
 from os import path
 from bot.hf.flifi import uszkhvis_chats_ahndler
@@ -55,7 +56,6 @@ def get_mod(client: Client):
         backup_cmd = "mongoexport --uri={} -c=users --type json --out {}".format(mongo_url,backup_file)
         subprocess.Popen(backup_cmd.split(), stdout=subprocess.PIPE)
         time.sleep(10)
-        await message.reply_document("{}".format(backup_file))
         alerts = 0
         while alerts < 2:
             failed = 0
