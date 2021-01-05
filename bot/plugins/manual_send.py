@@ -15,10 +15,11 @@ from bot import (
 )
 from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import user_list, remove_client_from_db
-from .broadcast import getDocId
+from .broadcast import getDocId, sendtelegram
 from datetime import datetime
-from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden
+from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden, PeerIdInvalid
 from bot import logging
+
 
 
 @Client.on_message(
@@ -32,6 +33,7 @@ async def missed_noti(client: Client, message: Message):
     except:
         await client.send_message(chat_id= AUTH_CHANNEL, text="Format:\n/send|notice_url|notice_title|notice_title")
         return
+    file_id = getDocId(url)
     broadcast_list = user_list()
     total = len(broadcast_list)
     alerts = 0
@@ -40,21 +42,23 @@ async def missed_noti(client: Client, message: Message):
         for i in range(0,(total)):
             try:
                 pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),title,tab)
-                await client.send_document(
-                    chat_id=broadcast_list[i],
-                    document=url,
-                    caption=pp
-                    )
-                i += 1
-                logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
-                time.sleep(0.3)
-            except (UserIsBlocked, ChatWriteForbidden):
-                failed += 1
-                i += 1 
-                remove_client_from_db(broadcast_list[i])
+                send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
+                if send_status == 200:
+                    i += 1
+                    logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
+                    time.sleep(0.3)
+                elif send_status == 404:
+                    failed += 1
+                    i += 1
+                    remove_client_from_db(broadcast_list[i])
+                    time.sleep(0.3)
+            except Exception as e:
+                logging.error("[*] {}".format(e))
         alerts += 1
         time.sleep(1)
     time.sleep(1)
     done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
     logging.critical(done)
     await client.send_animation(chat_id=AUTH_CHANNEL, animation="https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", caption=done)
+    
+    
