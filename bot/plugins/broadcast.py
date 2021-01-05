@@ -46,14 +46,16 @@ def get_mod(client: Client):
     if req_result[0] == 404:
         logging.info("[*] DTU Website has not been Updated.")
     elif req_result[0] == 200:
-        files_id = getDocId(req_result[4])
+        file_id = getDocId(req_result[4])
         broadcast_list = user_list()
         total = len(broadcast_list)
-        mongo_url, args = MONGO_URL.split("net/")
+        mongo_url, db1 = MONGO_URL.split("net/")
         mongo_url = mongo_url + 'net/dtu'
-        backup_file = "bot/hf/users_{}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        os.system("mongoexport --uri {} -c users -o {}".format(mongo_url,backup_file))
-        send_telegram(1, AUTH_CHANNEL, backup_file, '[Backup!] Current Total-{}'.format(total))
+        backup_file = "bot/hf/users_{}".format(datetime.now().strftime("%Y_%m_%d_%H:%M:%S"))
+        backup_cmd = "mongoexport --uri={} -c=users --type json --out {}".format(mongo_url,backup_file)
+        subprocess.Popen(backup_cmd.split(), stdout=subprocess.PIPE)
+        time.sleep(10)
+        await message.reply_document("{}".format(backup_file))
         alerts = 0
         while alerts < 2:
             failed = 0
