@@ -59,6 +59,6 @@ async def missed_noti(client: Client, message: Message):
     time.sleep(1)
     done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
     logging.critical(done)
-    await client.send_animation(chat_id=AUTH_CHANNEL, animation="https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", caption=done)
-    
+    sendtelegram(3 ,AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done)
+    return
     
