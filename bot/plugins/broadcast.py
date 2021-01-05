@@ -129,6 +129,8 @@ def sendtelegram(tipe, user_id, notice, caption):
             params=pramas)
         if r.status_code == 200 and r.json()["ok"]:
             return 200
+        else:
+            raise Exception
     except Exception as e:
         print(e)
         logging.info("[*] Could not send telegram message.")
