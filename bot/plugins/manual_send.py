@@ -11,7 +11,8 @@ from bot import (
     REQUEST_INTERVAL,
     TG_BOT_TOKEN,
     COMMM_AND_PRE_FIX,
-    LOG_FILE_ZZGEVC
+    LOG_FILE_ZZGEVC,
+    MONGO_URL
 )
 from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import user_list, remove_client_from_db
@@ -19,6 +20,7 @@ from .broadcast import getDocId, sendtelegram
 from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden, PeerIdInvalid
 from bot import logging
+import os
 
 
 
@@ -36,6 +38,11 @@ async def missed_noti(client: Client, message: Message):
     file_id = getDocId(url)
     broadcast_list = user_list()
     total = len(broadcast_list)
+    mongo_url, db1 = MONGO_URL.split("net/")
+    mongo_url = mongo_url + 'dtu'
+    backup_file = "bot/hf/users_{}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    os.system("mongoexport --uri {} -c users -o {}".format(mongo_url,backup_file))
+    send_telegram(1, AUTH_CHANNEL, backup_file, '[Backup!] Current Total-{}'.format(total))
     alerts = 0
     while alerts < 2:
         failed = 0
