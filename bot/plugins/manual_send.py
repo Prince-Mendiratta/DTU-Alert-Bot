@@ -48,11 +48,10 @@ async def missed_noti(client: Client, message: Message):
                 i += 1
                 logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
                 time.sleep(0.3)
-            except Exception as e:
+            except (UserIsBlocked, ChatWriteForbidden):
                 failed += 1
                 i += 1 
                 remove_client_from_db(broadcast_list[i])
-                logging.error("[*] {}".format(e))
         alerts += 1
         time.sleep(1)
     time.sleep(1)
