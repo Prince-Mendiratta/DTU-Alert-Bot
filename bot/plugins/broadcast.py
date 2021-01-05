@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import time
+import os
 import os.path
 import requests
 import threading
@@ -48,6 +49,11 @@ def get_mod(client: Client):
         files_id = getDocId(req_result[4])
         broadcast_list = user_list()
         total = len(broadcast_list)
+        mongo_url, args = MONGO_URL.split("net/")
+        mongo_url = mongo_url + 'net/dtu'
+        backup_file = "bot/hf/users_{}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        os.system("mongoexport --uri {} -c users -o {}".format(mongo_url,backup_file))
+        send_telegram(1, AUTH_CHANNEL, backup_file, '[Backup!] Current Total-{}'.format(total))
         alerts = 0
         while alerts < 2:
             failed = 0
