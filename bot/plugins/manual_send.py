@@ -21,6 +21,7 @@ from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden, PeerIdInvalid
 from bot import logging
 import os
+import sys
 
 
 @Client.on_message(
@@ -63,4 +64,7 @@ async def missed_noti(client: Client, message: Message):
         time.sleep(1)
     time.sleep(1)
     done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
+    sendtelegram(3 ,AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done)
     logging.critical(done)
+    sys.exit()
+   
