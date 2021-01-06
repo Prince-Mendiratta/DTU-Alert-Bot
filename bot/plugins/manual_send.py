@@ -21,7 +21,7 @@ from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden, PeerIdInvalid
 from bot import logging
 import os
-
+import subprocess
 
 
 @Client.on_message(
