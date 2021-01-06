@@ -21,7 +21,6 @@ from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden, PeerIdInvalid
 from bot import logging
 import os
-import subprocess
 
 
 @Client.on_message(
@@ -40,7 +39,7 @@ async def missed_noti(client: Client, message: Message):
     total = len(broadcast_list)
     mongo_url, db1 = MONGO_URL.split("net/")
     mongo_url = mongo_url + 'net/dtu'
-    subprocess.call(r'mongoexport --uri={} -c=users --type json --out "bot/hf/users_{}"'.format(mongo_url,datetime.now().strftime("%Y_%m_%d_%H_%M_%S")), shell=True)
+    os.system("mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(mongo_url,datetime.now().strftime("%Y_%m_%d_%H_%M_%S")))
     time.sleep(10)
     alerts = 0
     while alerts < 2:
