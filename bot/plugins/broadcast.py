@@ -61,7 +61,7 @@ def get_mod(client: Client):
             for i in range(0,(total)):
                 try:
                     pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),req_result[3],req_result[5])
-                    send_status = sendtelegram(1, broadcast_list[i], files_id, pp)
+                    send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
                     if send_status == 200:
                         i += 1
                         logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
