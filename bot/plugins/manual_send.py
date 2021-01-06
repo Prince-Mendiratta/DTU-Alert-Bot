@@ -44,7 +44,6 @@ async def missed_noti(client: Client, message: Message):
     backup_cmd = "mongoexport --uri={} -c=users --type json --out {}".format(mongo_url,backup_file)
     subprocess.Popen(backup_cmd.split(), stdout=subprocess.PIPE)
     time.sleep(10)
-    await message.reply_document("{}".format(backup_file))
     alerts = 0
     while alerts < 2:
         failed = 0
