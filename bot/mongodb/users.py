@@ -23,14 +23,14 @@ client = MongoClient(MONGO_URL)
 def add_client_to_db(chat_id, f_name, usname):
     # Add user to database
     mydb = client.dtu
-    mycol = mydb.test
+    mycol = mydb.users
     chat_id = str(chat_id)
     mydict = {
         "Chat Id" : "{}".format(chat_id),
         "First Name" : "{}".format(f_name),
         "Username" : "{}".format(usname)
     }
-    mm = mydb.test.count_documents({"Chat Id" : "{}".format(chat_id)})
+    mm = mydb.users.count_documents({"Chat Id" : "{}".format(chat_id)})
     add_status = 0
     if mm == 0:
         mycol.insert_one(mydict)
@@ -44,7 +44,7 @@ def add_client_to_db(chat_id, f_name, usname):
 
 def user_list():
     mydb = client.dtu
-    mycol = mydb.test
+    mycol = mydb.users
     broadcast_list = mycol.distinct("Chat Id")
     client.close()
     return broadcast_list
@@ -52,7 +52,7 @@ def user_list():
 
 def remove_client_from_db(chat_id):
     mydb = client.dtu
-    mycol = mydb.test
+    mycol = mydb.users
     mycol.remove({"Chat Id" : chat_id})
-    print("[*] A user has been deleted!")
+    print("[*] A user, {} has been deleted!".format(chat_id))
     client.close()
