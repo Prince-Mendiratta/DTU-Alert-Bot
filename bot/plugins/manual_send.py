@@ -41,6 +41,8 @@ async def missed_noti(client: Client, message: Message):
     mongo_url, db1 = MONGO_URL.split("net/")
     mongo_url = mongo_url + 'net/dtu'
     os.system("mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(mongo_url,datetime.now().strftime("%Y_%m_%d_%H_%M_%S")))
+    _, _, filenames = next(os.walk('bot/hf/'))
+    logging.info(filenames)
     for f in filenames:
         if not ".py" in f:
             await message.reply_document("bot/hf/{}".format(f))
