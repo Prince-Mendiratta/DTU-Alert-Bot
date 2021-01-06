@@ -54,8 +54,8 @@ def get_mod(client: Client):
         mongo_url, db1 = MONGO_URL.split("net/")
         mongo_url = mongo_url + 'net/dtu'
         backup_file = "bot/hf/users_{}".format(datetime.now().strftime("%Y_%m_%d_%H:%M:%S"))
-        backup_cmd = "mongoexport --uri={} -c=users --type json --out {}".format(mongo_url,backup_file)
-        subprocess.Popen(backup_cmd.split(), stdout=subprocess.PIPE)
+        backup_cmd = "mongoexport --uri={} --collection=users --type json --out {}".format(mongo_url,backup_file)
+        subprocess.Popen(backup_cmd, stdout=subprocess.PIPE, shell=True)
         time.sleep(10)
         alerts = 0
         while alerts < 2:
