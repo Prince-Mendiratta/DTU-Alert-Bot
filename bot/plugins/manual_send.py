@@ -21,7 +21,7 @@ from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden, PeerIdInvalid
 from bot import logging
 import os
-import subprocess
+import sys
 
 
 @Client.on_message(
@@ -40,10 +40,13 @@ async def missed_noti(client: Client, message: Message):
     total = len(broadcast_list)
     mongo_url, db1 = MONGO_URL.split("net/")
     mongo_url = mongo_url + 'net/dtu'
-    backup_file = "bot/hf/users_{}".format(datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
-    backup_cmd = "mongoexport --uri={} -c=users --type json --out {}".format(mongo_url,backup_file)
-    subprocess.Popen(backup_cmd, stdout=subprocess.PIPE, shell=True)
-    time.sleep(10)
+    os.system("mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(mongo_url,datetime.now().strftime("%Y_%m_%d_%H_%M_%S")))
+    _, _, filenames = next(os.walk('bot/hf/'))
+    logging.info(filenames)
+    for f in filenames:
+        if not ".py" in f:
+            await message.reply_document("bot/hf/{}".format(f))
+    time.sleep(3)
     alerts = 0
     while alerts < 2:
         failed = 0
@@ -66,7 +69,7 @@ async def missed_noti(client: Client, message: Message):
         time.sleep(1)
     time.sleep(1)
     done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
-    logging.critical(done)
     sendtelegram(3 ,AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done)
-    return
-    
+    logging.critical(done)
+    sys.exit()
+   

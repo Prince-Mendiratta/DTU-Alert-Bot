@@ -54,5 +54,5 @@ def remove_client_from_db(chat_id):
     mydb = client.dtu
     mycol = mydb.users
     mycol.remove({"Chat Id" : chat_id})
-    print("[*] A user has been deleted!")
+    print("[*] A user, {} has been deleted!".format(chat_id))
     client.close()

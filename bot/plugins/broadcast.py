@@ -53,9 +53,7 @@ def get_mod(client: Client):
         total = len(broadcast_list)
         mongo_url, db1 = MONGO_URL.split("net/")
         mongo_url = mongo_url + 'net/dtu'
-        backup_file = "bot/hf/users_{}".format(datetime.now().strftime("%Y_%m_%d_%H:%M:%S"))
-        backup_cmd = "mongoexport --uri={} --collection=users --type json --out {}".format(mongo_url,backup_file)
-        subprocess.Popen(backup_cmd, stdout=subprocess.PIPE, shell=True)
+        os.system("mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(mongo_url,datetime.now().strftime("%Y_%m_%d_%H_%M_%S")))
         time.sleep(10)
         alerts = 0
         while alerts < 2:
@@ -63,7 +61,7 @@ def get_mod(client: Client):
             for i in range(0,(total)):
                 try:
                     pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),req_result[3],req_result[5])
-                    send_status = sendtelegram(1, broadcast_list[i], files_id, pp)
+                    send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
                     if send_status == 200:
                         i += 1
                         logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
