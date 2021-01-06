@@ -40,9 +40,9 @@ async def missed_noti(client: Client, message: Message):
     total = len(broadcast_list)
     mongo_url, db1 = MONGO_URL.split("net/")
     mongo_url = mongo_url + 'net/dtu'
-    backup_file = "users_{}".format(datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
+    backup_file = "bot/hf/users_{}".format(datetime.now().strftime("%Y_%m_%d_%H_%M_%S"))
     backup_cmd = "mongoexport --uri={} -c=users --type json --out {}".format(mongo_url,backup_file)
-    subprocess.Popen(backup_cmd.split(), stdout=subprocess.PIPE)
+    subprocess.Popen(backup_cmd, stdout=subprocess.PIPE, shell=True)
     time.sleep(10)
     alerts = 0
     while alerts < 2:
