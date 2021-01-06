@@ -44,7 +44,7 @@ async def missed_noti(client: Client, message: Message):
     for f in filenames:
         if not ".py" in f:
             await message.reply_document("bot/hf/{}".format(f))
-    time.sleep(10)
+    time.sleep(3)
     alerts = 0
     while alerts < 2:
         failed = 0
