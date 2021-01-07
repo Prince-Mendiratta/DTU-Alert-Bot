@@ -77,14 +77,14 @@ def request_time(client: Client):
         recorded_dates = json.loads(data)
         modified_key = dict_compare(recorded_dates, dates)
         if modified_key != []:
-            Tab = ['.', 'Notices', 'Jobs', 'Tenders', 'Latest News', 'Forthcoming Events', 'Press Release', '-', '1st Year Notices']
+            Tabb = ['.', 'Notices', 'Jobs', 'Tenders', 'Latest News', 'Forthcoming Events', 'Press Release', '-', '1st Year Notices']
             temp, tab, link = modified_key[0].split('.')
-            new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/text()'.format(tab,link))[0]
-            new_link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/@href'.format(tab,link))[0]
+            new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/text()'.format(tab))[0]
+            new_link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/@href'.format(tab))[0]
             new_link = new_link.split('.',1)[1]
             new_link = 'dtu.ac.in' + new_link
-            Tab = Tab[int(tab)]
-            return_values = [200, top_notice[0], top_link, new_notice, new_link, Tab]
+            Tabb = Tabb[int(tab)]
+            return_values = [200, top_notice[0], top_link, new_notice, new_link, Tabb]
             return return_values
         else:
             return_values = [404, top_notice[0], top_link, ' ', ' ']
