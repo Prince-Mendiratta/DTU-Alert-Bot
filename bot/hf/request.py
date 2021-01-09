@@ -42,7 +42,10 @@ def request_time(client: Client):
         print("[{}]: The request timed out.".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         sys.exit(1)
     tree = html.fromstring(r.content)
-    top_notice = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/text()')
+    try:
+        top_notice = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/text()')[0]
+    except IndexError:
+        top_notice = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/font/text()')[0]
     top_link = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/@href')[0]
     top_link = top_link.split('.',1)[1]
     top_link = 'dtu.ac.in' + top_link
@@ -69,7 +72,7 @@ def request_time(client: Client):
         with open("bot/hf/recorded_status.json", "w+") as f:
             f.write(data)
             print("[*] Recorded Current Status.\n[*] Latest dates: {}".format(data))
-            return_values = [404, top_notice[0], top_link, ' ', ' ']
+            return_values = [404, top_notice, top_link, ' ', ' ']
             return return_values
     else:
         with open("bot/hf/recorded_status.json", "r") as f:
@@ -84,10 +87,10 @@ def request_time(client: Client):
             new_link = new_link.split('.',1)[1]
             new_link = 'dtu.ac.in' + new_link
             Tabb = Tabb[int(tab)]
-            return_values = [200, top_notice[0], top_link, new_notice, new_link, Tabb]
+            return_values = [200, top_notice, top_link, new_notice, new_link, Tabb]
             return return_values
         else:
-            return_values = [404, top_notice[0], top_link, ' ', ' ']
+            return_values = [404, top_notice, top_link, ' ', ' ']
             return return_values
             
     
