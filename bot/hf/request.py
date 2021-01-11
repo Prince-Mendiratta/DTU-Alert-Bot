@@ -82,7 +82,10 @@ def request_time(client: Client):
         if modified_key != []:
             Tabb = ['.', 'Notices', 'Jobs', 'Tenders', 'Latest News', 'Forthcoming Events', 'Press Release', '-', '1st Year Notices']
             temp, tab, link = modified_key[0].split('.')
-            new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/text()'.format(tab))[0]
+            try:
+                new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/text()'.format(tab))[0]
+            except IndexError:
+                new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/font/text()'.format(tab))[0]
             new_link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/@href'.format(tab))[0]
             new_link = new_link.split('.',1)[1]
             new_link = 'dtu.ac.in' + new_link
