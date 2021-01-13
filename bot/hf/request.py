@@ -45,7 +45,12 @@ def request_time(client: Client):
     try:
         top_notice = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/text()')[0]
     except IndexError:
-        top_notice = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/font/text()')[0]
+        try:
+            top_noticee = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/font/text()')
+            logging.error(top_noticee)
+            top_notice = top_noticee[0]
+        except:
+            top_notice = "-Please check yourself-"
     top_link = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/@href')[0]
     top_link = top_link.split('.',1)[1]
     top_link = 'dtu.ac.in' + top_link
@@ -86,6 +91,10 @@ def request_time(client: Client):
                 new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/text()'.format(tab))[0]
             except IndexError:
                 new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/font/text()'.format(tab))[0]
+            if tab == 2:
+                context = tree.xpath('//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/text()')
+                vacancy = tree.xpath('//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/font/text()')
+                new_notice = context[0] + vacancy[0] + context[1]
             new_link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/@href'.format(tab))[0]
             new_link = new_link.split('.',1)[1]
             new_link = 'dtu.ac.in' + new_link
