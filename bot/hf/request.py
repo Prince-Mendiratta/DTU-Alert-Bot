@@ -93,8 +93,11 @@ def request_time(client: Client):
                 new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/font/text()'.format(tab))[0]
             if tab == 2:
                 context = tree.xpath('//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/text()')
-                vacancy = tree.xpath('//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/font/text()')
-                new_notice = context[0] + vacancy[0] + context[1]
+                try:
+                    vacancy = tree.xpath('//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/font/text()')
+                    new_notice = context[0] + vacancy[0] + context[1]
+                except IndexError:
+                    new_notice = context[0]
             new_link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/@href'.format(tab))[0]
             new_link = new_link.split('.',1)[1]
             new_link = 'dtu.ac.in' + new_link
