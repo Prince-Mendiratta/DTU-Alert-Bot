@@ -71,6 +71,7 @@ def get_mod(client: Client):
                     elif send_status == 404:
                         failed += 1
                         i += 1
+                        failed_users.add(broadcast_list[i])
                         time.sleep(0.18)
                 except Exception as e:
                     logging.error("[*] {}".format(e))
