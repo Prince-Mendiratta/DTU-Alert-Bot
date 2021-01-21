@@ -57,9 +57,9 @@ def get_mod(client: Client):
         os.system("mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(mongo_url,datetime.now().strftime("%Y_%m_%d_%H_%M_%S")))
         time.sleep(10)
         alerts = 1
+        failed = 0
+        failed_users = set()
         while alerts < 2:
-            failed = 0
-            failed_users = set()
             for i in range(0,(total)):
                 try:
                     pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),req_result[3],req_result[5])
