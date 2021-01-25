@@ -58,7 +58,7 @@ def get_mod(client: Client):
         time.sleep(10)
         alerts = 1
         failed = 0
-        failed_users = set()
+        failed_users = []
         while alerts < 2:
             for i in range(0,(total)):
                 try:
@@ -68,11 +68,13 @@ def get_mod(client: Client):
                         i += 1
                         logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
                         time.sleep(0.3)
-                    elif send_status == 404:
+                    elif send_status == 403:
                         failed += 1
                         i += 1
                         failed_users.add(broadcast_list[i])
                         time.sleep(0.18)
+                    else:
+                        continue
                 except Exception as e:
                     logging.error("[*] {}".format(e))
             alerts += 1
@@ -147,10 +149,11 @@ def sendtelegram(tipe, user_id, notice, caption):
         r = requests.get(
             "https://api.telegram.org/bot{}/send{}".format(token,handler),
             params=pramas)
+        logging.info(r.json()['error_code'])
         if r.status_code == 200 and r.json()["ok"]:
             return 200
         elif r.json()['error_code'] == 403:
-            return 404
+            return 403
         else:
             raise Exception
     except Exception as e:
