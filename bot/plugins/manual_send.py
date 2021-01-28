@@ -69,8 +69,6 @@ async def missed_noti(client: Client, message: Message):
         alerts += 1
         time.sleep(1)
     
-    for us in failed_users:
-        remove_client_from_db(us)
     
     time.sleep(1)
     done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
