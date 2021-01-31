@@ -48,7 +48,6 @@ def request_time(client: Client):
     except IndexError:
         try:
             top_noticee = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/font/text()')
-            logging.error(top_noticee)
             top_notice = top_noticee[0]
         except Exception as e:
             logging.error(e)
