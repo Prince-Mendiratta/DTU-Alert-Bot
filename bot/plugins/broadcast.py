@@ -48,6 +48,9 @@ def get_mod(client: Client):
     mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),req_result[1])
     if req_result[0] == 404:
         logging.info("[*] DTU Website has not been Updated.")
+        with open("bot/plugins/check.txt", "w+") as f:
+            f.write(mes2)
+            f.close()
     elif req_result[0] == 200:
         file_id = getDocId(req_result[4])
         broadcast_list = user_list()
@@ -147,15 +150,15 @@ def sendtelegram(tipe, user_id, notice, caption):
         r = requests.get(
             "https://api.telegram.org/bot{}/send{}".format(token,handler),
             params=pramas)
-        logging.info(r.json()['error_code'])
+        logging.info(r.status_code)
         if r.status_code == 200 and r.json()["ok"]:
             return 200
-        elif r.json()['error_code'] == 403:
+        elif r.status_code == 403:
             return 403
         else:
             raise Exception
     except Exception as e:
-        print(e)
+        logging.error(e)
         logging.info("[*] Could not send telegram message.")
         return 69
     
