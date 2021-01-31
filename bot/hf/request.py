@@ -32,6 +32,7 @@ from bs4 import BeautifulSoup
 from requests.exceptions import Timeout
 from dotenv import load_dotenv
 from lxml import html
+from bot import logging
 
 
 def request_time(client: Client):
