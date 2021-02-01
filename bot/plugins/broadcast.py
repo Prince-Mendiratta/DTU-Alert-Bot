@@ -74,7 +74,7 @@ def get_mod(client: Client):
                     elif send_status == 403:
                         failed += 1
                         i += 1
-                        failed_users.add(broadcast_list[i])
+                        failed_users.append(broadcast_list[i])
                         time.sleep(0.18)
                     else:
                         continue
