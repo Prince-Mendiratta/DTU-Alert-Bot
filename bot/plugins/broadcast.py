@@ -82,6 +82,9 @@ def get_mod(client: Client):
                     logging.error("[*] {}".format(e))
             alerts += 1
             time.sleep(1)
+            
+        for us in failed_users:	
+            remove_client_from_db(us)
         
         os.remove("bot/hf/recorded_status.json")
         time.sleep(2)
