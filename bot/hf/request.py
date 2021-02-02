@@ -32,6 +32,7 @@ from bs4 import BeautifulSoup
 from requests.exceptions import Timeout
 from dotenv import load_dotenv
 from lxml import html
+from bot import logging
 
 
 def request_time(client: Client):
@@ -47,9 +48,9 @@ def request_time(client: Client):
     except IndexError:
         try:
             top_noticee = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/font/text()')
-            logging.error(top_noticee)
             top_notice = top_noticee[0]
-        except:
+        except Exception as e:
+            logging.error(e)
             top_notice = "-Please check yourself-"
     top_link = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/@href')[0]
     top_link = top_link.split('.',1)[1]

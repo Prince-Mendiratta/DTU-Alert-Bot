@@ -47,9 +47,10 @@ async def missed_noti(client: Client, message: Message):
         if not ".py" in f:
             await message.reply_document("bot/hf/{}".format(f))
     time.sleep(3)
-    alerts = 0
+    alerts = 1
+    failed_users = set()
+    failed = 0
     while alerts < 2:
-        failed = 0
         for i in range(0,(total)):
             try:
                 pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),title,tab)
@@ -61,15 +62,17 @@ async def missed_noti(client: Client, message: Message):
                 elif send_status == 404:
                     failed += 1
                     i += 1
-                    remove_client_from_db(broadcast_list[i])
+                    failed_users.add(broadcast_list[i])
                     time.sleep(0.3)
             except Exception as e:
                 logging.error("[*] {}".format(e))
         alerts += 1
         time.sleep(1)
+    
+    
     time.sleep(1)
     done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
     sendtelegram(3 ,AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done)
     logging.critical(done)
     sys.exit()
-   
+ 

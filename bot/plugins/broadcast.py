@@ -15,6 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import time
+import sys
 import os
 import os.path
 import requests
@@ -47,6 +48,9 @@ def get_mod(client: Client):
     mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),req_result[1])
     if req_result[0] == 404:
         logging.info("[*] DTU Website has not been Updated.")
+        with open("bot/plugins/check.txt", "w+") as f:
+            f.write(mes2)
+            f.close()
     elif req_result[0] == 200:
         file_id = getDocId(req_result[4])
         broadcast_list = user_list()
@@ -55,9 +59,10 @@ def get_mod(client: Client):
         mongo_url = mongo_url + 'net/dtu'
         os.system("mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(mongo_url,datetime.now().strftime("%Y_%m_%d_%H_%M_%S")))
         time.sleep(10)
-        alerts = 0
+        alerts = 1
+        failed = 0
+        failed_users = []
         while alerts < 2:
-            failed = 0
             for i in range(0,(total)):
                 try:
                     pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"),req_result[3],req_result[5])
@@ -66,15 +71,21 @@ def get_mod(client: Client):
                         i += 1
                         logging.info("[*] Alert Sent to {}/{} people.".format(i,total))
                         time.sleep(0.3)
-                    elif send_status == 404:
+                    elif send_status == 403:
                         failed += 1
                         i += 1
-                        remove_client_from_db(broadcast_list[i])
-                        time.sleep(0.3)
+                        failed_users.append(broadcast_list[i])
+                        time.sleep(0.18)
+                    else:
+                        continue
                 except Exception as e:
                     logging.error("[*] {}".format(e))
             alerts += 1
             time.sleep(1)
+            
+        for us in failed_users:	
+            remove_client_from_db(us)
+        
         os.remove("bot/hf/recorded_status.json")
         time.sleep(2)
         done="[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format((int(total-failed)),total,failed)
@@ -110,8 +121,9 @@ def getDocId(notice):
             raise Exception
     except Exception as e:
         logging.error(e)
-        logging.info("[*] [{}]: Could not send telegram message.".format(datetime.now()))
+        logging.info("[*] [{}]: Error Sending Logs File!!.".format(datetime.now()))
         doc_file_id = 0
+        sys.exit()
         return doc_file_id
 
 
@@ -141,14 +153,17 @@ def sendtelegram(tipe, user_id, notice, caption):
         r = requests.get(
             "https://api.telegram.org/bot{}/send{}".format(token,handler),
             params=pramas)
+        logging.info(r.status_code)
         if r.status_code == 200 and r.json()["ok"]:
             return 200
+        elif r.status_code == 403:
+            return 403
         else:
             raise Exception
     except Exception as e:
-        print(e)
+        logging.error(e)
         logging.info("[*] Could not send telegram message.")
-        return 404
+        return 69
     
 
 def check_status(user_id, usname):
