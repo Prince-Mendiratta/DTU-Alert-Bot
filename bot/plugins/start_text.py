@@ -15,13 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import threading
-from pyrogram import (
-    Client,
-    filters
-)
-from pyrogram.types import (
-    Message
-)
+from pyrogram import Client, filters
+from pyrogram.types import Message
 from bot import (
     AUTH_CHANNEL,
     COMMM_AND_PRE_FIX,
@@ -30,9 +25,8 @@ from bot import (
     START_OTHER_USERS_TEXT,
     LOG_FILE_ZZGEVC,
     REQUEST_INTERVAL,
-    HELP_MEHH
+    HELP_MEHH,
 )
-from bot.hf.flifi import uszkhvis_chats_ahndler
 from bot.mongodb.users import add_client_to_db
 from .broadcast import get_mod, check_status
 from bot import logging
@@ -43,39 +37,36 @@ logging.info("\n{}".format(banner))
 
 get_mod(Client)
 
+
 @Client.on_message(
-    filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
-    ~uszkhvis_chats_ahndler([AUTH_CHANNEL])
+    filters.command(START_COMMAND, COMMM_AND_PRE_FIX) & ~filters.chat(AUTH_CHANNEL)
 )
 async def num_start_message(client: Client, message: Message):
     with open("bot/plugins/check.txt", "r") as f:
         last_check = f.read()
-    await message.reply_text(
-        START_OTHER_USERS_TEXT.format(last_check),
-        quote=True
-    )
+    await message.reply_text(START_OTHER_USERS_TEXT.format(last_check), quote=True)
     add_status, total_users = add_client_to_db(
-        message.from_user.id,
-        message.from_user.first_name,
-        message.from_user.username
+        message.from_user.id, message.from_user.first_name, message.from_user.username
     )
     if add_status == 1:
-        await client.send_message(chat_id=AUTH_CHANNEL, text="🆕 New User!\nTotal: {}\nName: {}\nUsername: @{}".format(total_users,message.from_user.first_name, message.from_user.username), disable_notification=True)
+        await client.send_message(
+            chat_id=AUTH_CHANNEL,
+            text="🆕 New User!\nTotal: {}\nName: {}\nUsername: @{}".format(
+                total_users, message.from_user.first_name, message.from_user.username
+            ),
+            disable_notification=True,
+        )
 
 
 @Client.on_message(
-    filters.command(START_COMMAND, COMMM_AND_PRE_FIX) &
-    uszkhvis_chats_ahndler([AUTH_CHANNEL])
+    filters.command(START_COMMAND, COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
 )
 async def nimda_start_message(client: Client, message: Message):
     with open("bot/plugins/check.txt", "r") as f:
         last_check = f.read()
-    total_users = add_client_to_db(
-        message.from_user.id,
-        message.from_user.first_name,
-        message.from_user.username
+    add_status, total_users = add_client_to_db(
+        message.from_user.id, message.from_user.first_name, message.from_user.username
     )
     await message.reply_text(
-        ONLINE_CHECK_START_TEXT.format(total_users,last_check),
-        quote=True
+        ONLINE_CHECK_START_TEXT.format(total_users, last_check), quote=True
     )
