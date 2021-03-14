@@ -19,7 +19,7 @@
 import os
 
 
-def get_config(name: str, d_v=None, should_prompt=False):
+def get_env(name: str, d_v=None, should_prompt=False):
     """ accepts one mandatory variable
     and prompts for the value, if not available """
     val = os.environ.get(name, d_v)
