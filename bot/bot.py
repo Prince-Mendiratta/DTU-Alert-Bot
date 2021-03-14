@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-""" MtProto Bot """
 
 from pyrogram import (
     Client,
@@ -22,7 +21,7 @@ from pyrogram import (
 )
 from . import (
     API_HASH,
-    APP_ID,
+    API_ID,
     LOGGER,
     TG_BOT_TOKEN,
     TG_BOT_WORKERS
@@ -37,7 +36,7 @@ class Bot(Client):
         super().__init__(
             "DTU-Alert-Bot",
             api_hash=API_HASH,
-            api_id=APP_ID,
+            api_id=API_ID,
             bot_token=TG_BOT_TOKEN,
             plugins={
                 "root": "bot/plugins"
