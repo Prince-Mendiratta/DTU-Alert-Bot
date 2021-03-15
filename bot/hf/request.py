@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 import os.path
 import sys
 import requests
@@ -30,7 +31,6 @@ from os import path
 from datetime import datetime
 from bs4 import BeautifulSoup
 from requests.exceptions import Timeout
-from dotenv import load_dotenv
 from lxml import html
 from bot import logging
 
@@ -40,39 +40,44 @@ def request_time(client: Client):
     try:
         r = requests.get(('http://dtu.ac.in/'), timeout=25)
     except Timeout:
-        print("[{}]: The request timed out.".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        print("[{}]: The request timed out.".format(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         sys.exit(1)
     tree = html.fromstring(r.content)
     try:
-        top_notice = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/text()')[0]
+        top_notice = tree.xpath(
+            '//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/text()')[0]
     except IndexError:
         try:
-            top_noticee = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/font/text()')
+            top_noticee = tree.xpath(
+                '//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/font/text()')
             top_notice = top_noticee[0]
         except Exception as e:
             logging.error(e)
             top_notice = "-Please check yourself-"
     top_link = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/@href')[0]
-    top_link = top_link.split('.',1)[1]
+    top_link = top_link.split('.', 1)[1]
     top_link = 'dtu.ac.in' + top_link
     dates = {}
     recorded_dates = {}
     tabs = 1
     while tabs < 9:
-        for i in range(1,8):
+        for i in range(1, 8):
             try:
-                date_text = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/small/em/i/text()'.format(tabs,i))
+                date_text = tree.xpath(
+                    '//*[@id="tab{}"]/div[1]/ul/li[{}]/small/em/i/text()'.format(tabs, i))
                 if date_text != []:
-                    dates["Date.{}.{}".format(tabs,i)] = date_text
+                    dates["Date.{}.{}".format(tabs, i)] = date_text
                     if not os.path.exists("recorded_status.json"):
-                        recorded_dates["Date.{}.{}".format(tabs,i)] = date_text
+                        recorded_dates["Date.{}.{}".format(
+                            tabs, i)] = date_text
                     i = i + 1
                 else:
                     i = i + 1
             except Exception as e:
                 print(e)
                 i = i + 1
-        tabs+=1
+        tabs += 1
     if not path.exists("bot/hf/recorded_status.json"):
         data = json.dumps(recorded_dates)
         with open("bot/hf/recorded_status.json", "w+") as f:
@@ -86,34 +91,40 @@ def request_time(client: Client):
         recorded_dates = json.loads(data)
         modified_key = dict_compare(recorded_dates, dates)
         if modified_key != []:
-            Tabb = ['.', 'Notices', 'Jobs', 'Tenders', 'Latest News', 'Forthcoming Events', 'Press Release', '-', '1st Year Notices']
+            Tabb = ['.', 'Notices', 'Jobs', 'Tenders', 'Latest News',
+                    'Forthcoming Events', 'Press Release', '-', '1st Year Notices']
             temp, tab, link = modified_key[0].split('.')
             try:
-                new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/text()'.format(tab))[0]
+                new_notice = tree.xpath(
+                    '//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/text()'.format(tab))[0]
             except IndexError:
-                new_notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/font/text()'.format(tab))[0]
+                new_notice = tree.xpath(
+                    '//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/font/text()'.format(tab))[0]
             if tab == 2:
-                context = tree.xpath('//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/text()')
+                context = tree.xpath(
+                    '//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/text()')
                 try:
-                    vacancy = tree.xpath('//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/font/text()')
+                    vacancy = tree.xpath(
+                        '//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/font/text()')
                     new_notice = context[0] + vacancy[0] + context[1]
                 except IndexError:
                     new_notice = context[0]
-            new_link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/@href'.format(tab))[0]
-            new_link = new_link.split('.',1)[1]
+            new_link = tree.xpath(
+                '//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/@href'.format(tab))[0]
+            new_link = new_link.split('.', 1)[1]
             new_link = 'dtu.ac.in' + new_link
             Tabb = Tabb[int(tab)]
-            return_values = [200, top_notice, top_link, new_notice, new_link, Tabb]
+            return_values = [200, top_notice,
+                             top_link, new_notice, new_link, Tabb]
             return return_values
         else:
             return_values = [404, top_notice, top_link, ' ', ' ']
             return return_values
-            
-    
+
 
 def dict_compare(d1, d2):
     d1_keys = set(d1.keys())
     d2_keys = set(d2.keys())
     shared_keys = d1_keys.intersection(d2_keys)
-    modified = {o : (d1[o], d2[o]) for o in shared_keys if d1[o] != d2[o]}
+    modified = {o: (d1[o], d2[o]) for o in shared_keys if d1[o] != d2[o]}
     return (sorted(list(modified.keys())))

@@ -14,23 +14,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from typing import List, Union
-from pyrogram import (
-    Client,
-    filters
-)
-from pyrogram.types import (
-    Message
-)
+""" wrapper for getting the credentials """
+
+import os
 
 
-def uszkhvis_chats_ahndler(chats: List[Union[str, int]]):
-    async def func(flt, client: Client, message: Message):
-        chats = flt.chats
-        return bool(
-            message.chat and (
-                message.chat.id in chats
-            )
-        )
-    # "chats" kwarg is accessed with "flt.chats" above
-    return filters.create(func, chats=chats)
+def get_env(name: str, d_v=None, should_prompt=False):
+    """ accepts one mandatory variable
+    and prompts for the value, if not available """
+    val = os.environ.get(name, d_v)
+    if not val and should_prompt:
+        try:
+            val = input(f"enter {name}'s value: ")
+        except EOFError:
+            val = d_v
+        print("\n")
+    return val

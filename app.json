@@ -13,10 +13,8 @@
     "administrators"
   ],
   "repository": "https://github.com/Dark-Princ3/DTU-Alert-Bot",
-  "website": "https://How2techy.com",
-  "success_url": "#TODO",
   "env": {
-    "APP_ID": {
+    "API_ID": {
       "description": "Get this value from my.telegram.org!"
     },
     "API_HASH": {
