@@ -47,7 +47,7 @@ def request_time(client: Client):
     try:
         top_notice = tree.xpath(
             '//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/text()')[0]
-        if top_notice == ' ':
+        if top_notice == " ":
             raise IndexError
     except IndexError:
         try:
