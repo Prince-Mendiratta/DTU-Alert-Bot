@@ -18,6 +18,8 @@ from pymongo import MongoClient
 from bot import MONGO_URL
 from bot import logging
 
+url, params = MONGO_URL.split("?")
+MONGO_URL = url + "?ssl=true&ssl_cert_reqs=CERT_NONE&" + params
 client = MongoClient(MONGO_URL)
 
 
