@@ -118,6 +118,7 @@ def getDocId(notice):
             doc_file_id = r.json()["result"]["document"]["file_id"]
             return doc_file_id
         else:
+            logging.error(str(r.json()))
             raise Exception
     except Exception as e:
         logging.error(e)
