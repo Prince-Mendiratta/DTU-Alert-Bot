@@ -122,8 +122,9 @@ def getDocId(notice):
     except Exception as e:
         logging.error(e)
         logging.info(
-            "[*] [{}]: Error Sending Logs File!!.".format(datetime.now()))
+            "[*] [{}]: Error Sending Logs File!!. - {}".format(datetime.now(),e))
         doc_file_id = 0
+        sendtelegram(2, AUTH_CHANNEL, "_", e)
         sys.exit()
         return doc_file_id
 
