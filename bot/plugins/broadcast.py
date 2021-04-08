@@ -34,10 +34,10 @@ import subprocess
 
 def get_mod(client: Client):
     req_result = request_time(Client)
-    mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
-    )
     if req_result[0] == 404:
+        mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
+        )
         logging.info("[*] DTU Website has not been Updated.")
         with open("bot/plugins/check.txt", "w+") as f:
             f.write(mes2)
