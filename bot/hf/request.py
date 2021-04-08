@@ -42,7 +42,8 @@ def request_time(client: Client):
     except Timeout:
         print("[{}]: The request timed out.".format(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-        sys.exit(1)
+        return [403]
+    
     tree = html.fromstring(r.content)
     try:
         top_notice = tree.xpath(
