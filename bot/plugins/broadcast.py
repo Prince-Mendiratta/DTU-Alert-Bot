@@ -42,6 +42,9 @@ def get_mod(client: Client):
         with open("bot/plugins/check.txt", "w+") as f:
             f.write(mes2)
             f.close()
+    elif req_result[0] == 403:
+        sendtelegram(2, AUTH_CHANNEL, "_", "Request Timed Out.")
+        mes2 = "[{}]: DTU Website has not been Updated.".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     elif req_result[0] == 200:
         file_id = getDocId(req_result[4])
         broadcast_list = user_list()
