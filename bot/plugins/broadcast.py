@@ -46,6 +46,9 @@ def get_mod(client: Client):
         sendtelegram(2, AUTH_CHANNEL, "_", "Request Timed Out.")
         mes2 = "[{}]: DTU Website has not been Updated.".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     elif req_result[0] == 200:
+        mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
+        )
         file_id = getDocId(req_result[4])
         broadcast_list = user_list()
         total = len(broadcast_list)
