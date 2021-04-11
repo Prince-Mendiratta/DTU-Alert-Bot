@@ -58,7 +58,7 @@ def request_time(client: Client):
         except Exception as e:
             logging.error(e)
             top_notice = "-Please check yourself-"
-    top_link = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[0]/h6/a/@href')[0]
+    top_link = tree.xpath('//*[@id="tab4"]/div[1]/ul/li[1]/h6/a/@href')[0]
     top_link = top_link.split('.', 1)[1]
     top_link = 'dtu.ac.in' + top_link
     dates = {}
