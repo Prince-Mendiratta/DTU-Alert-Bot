@@ -12,7 +12,7 @@
     "channel",
     "administrators"
   ],
-  "repository": "https://github.com/Dark-Princ3/DTU-Alert-Bot",
+  "repository": "https://github.com/Prince-Mendiratta/DTU-Alert-Bot",
   "env": {
     "API_ID": {
       "description": "Get this value from my.telegram.org!"
