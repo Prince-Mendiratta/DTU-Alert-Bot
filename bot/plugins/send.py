@@ -34,21 +34,8 @@ async def missed_noti(client: Client, message: Message):
     file_id = getDocId(url)
     broadcast_list = user_list()
     total = len(broadcast_list)
-    mongo_url, db1 = MONGO_URL.split("net/")
-    mongo_url = mongo_url + "net/dtu"
-    os.system(
-        "mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(
-            mongo_url, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        )
-    )
-    _, _, filenames = next(os.walk("bot/hf/"))
-    logging.info(filenames)
-    for f in filenames:
-        if not ".py" in f:
-            await message.reply_document("bot/hf/{}".format(f))
-    time.sleep(3)
     alerts = 1
-    failed_users = set()
+    failed_users = []
     failed = 0
     while alerts < 2:
         for i in range(0, (total)):
@@ -64,7 +51,7 @@ async def missed_noti(client: Client, message: Message):
                 elif send_status == 404:
                     failed += 1
                     i += 1
-                    failed_users.add(broadcast_list[i])
+                    failed_users.append(broadcast_list[i])
                     time.sleep(0.3)
             except Exception as e:
                 logging.error("[*] {}".format(e))

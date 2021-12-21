@@ -6,13 +6,10 @@ Need to be informed of notices which are being uploaded on [Delhi Technological 
 
 - If you want to create your own bot with customised messages, commands and new functions, make sure to fork and star the repository. You can use the following methods to deploy the bot!
 
-## License
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [LICENSE](./LICENSE) for more details.
-
 ## DISCLAIMER
 
 This project has been submitted as a part of Innovative Project Work for degree of BACHELOR OF TECHNOLOGY in COMPUTER SCIENCE AND ENGINEERING, Delhi Technological University, Delhi by Prince Mendiratta (me). Please do not use this project source code without proper citations or reference to avoid infringement of License. See the [LICENSE](./LICENSE) for more details.
+For reference, I have attached the [Project Report](https://github.com/Prince-Mendiratta/DTU-Alert-Bot/blob/master/Project_Report.pdf) itself as well in case someone wants some inspiration.
 
 ## Demo RoBot
 
@@ -89,6 +86,10 @@ This project has been submitted as a part of Innovative Project Work for degree 
 - `LOG_FILE_ZZGEVC`: The path to store log files.
 
 - `REQUEST_INTERVAL`: Time interval between each check.
+
+## License
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the [LICENSE](./LICENSE) for more details.
 
 ## Credits, and Thanks to
 

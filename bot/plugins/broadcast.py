@@ -52,14 +52,6 @@ def get_mod(client: Client):
         file_id = getDocId(req_result[4])
         broadcast_list = user_list()
         total = len(broadcast_list)
-        mongo_url, db1 = MONGO_URL.split("net/")
-        mongo_url = mongo_url + "net/dtu"
-        os.system(
-            "mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(
-                mongo_url, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-            )
-        )
-        time.sleep(10)
         failed = 0
         failed_users = []
         for i in range(0, (total)):
@@ -88,7 +80,7 @@ def get_mod(client: Client):
 
         os.remove("bot/hf/recorded_status.json")
         time.sleep(2)
-        done = "[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format(
+        done = "[*] Notice Alert Sent to {}/{} people.\n {} user(s) were not sent the message.".format(
             (int(total - failed)), total, failed
         )
         logging.critical(done)
@@ -159,8 +151,12 @@ def sendtelegram(tipe, user_id, notice, caption):
         if r.status_code == 200 and r.json()["ok"]:
             return 200
         elif r.status_code == 403:
+            logging.info(
+                        "[*] Alert was not sent to {} due to being blocked. ".format(user_id))
             return 403
         else:
+            logging.info(
+                        "[*] Alert was not sent to {}. Request - {} ".format(user_id, r.json()))
             raise Exception
     except Exception as e:
         logging.error(e)
