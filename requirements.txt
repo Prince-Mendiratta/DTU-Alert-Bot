@@ -1,5 +1,5 @@
 Pyrogram>=1.1.0
-TgCrypto==1.2.1
+TgCrypto==1.2.2
 
 python-dotenv>=0.10
 lxml==4.6.2

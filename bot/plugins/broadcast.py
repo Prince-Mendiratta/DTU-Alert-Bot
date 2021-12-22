@@ -34,31 +34,29 @@ import subprocess
 
 def get_mod(client: Client):
     req_result = request_time(Client)
-    mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
-    )
     if req_result[0] == 404:
+        mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
+        )
         logging.info("[*] DTU Website has not been Updated.")
         with open("bot/plugins/check.txt", "w+") as f:
             f.write(mes2)
             f.close()
+    elif req_result[0] == 403:
+        sendtelegram(2, AUTH_CHANNEL, "_", "Request Timed Out.")
+        mes2 = "[{}]: DTU Website has not been Updated.".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     elif req_result[0] == 200:
+        mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
+        )
         file_id = getDocId(req_result[4])
         broadcast_list = user_list()
         total = len(broadcast_list)
-        mongo_url, db1 = MONGO_URL.split("net/")
-        mongo_url = mongo_url + "net/dtu"
-        os.system(
-            "mongoexport --uri={} -c=users --type json --out bot/hf/users_{}".format(
-                mongo_url, datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-            )
-        )
-        time.sleep(10)
         failed = 0
         failed_users = []
         for i in range(0, (total)):
             try:
-                pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(
+                pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers from @DTUAlertBot!".format(
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     req_result[3],
                     req_result[5],
@@ -79,12 +77,10 @@ def get_mod(client: Client):
             except Exception as e:
                 logging.error("[*] {}".format(e))
 
-        for us in failed_users:
-            remove_client_from_db(us)
 
         os.remove("bot/hf/recorded_status.json")
         time.sleep(2)
-        done = "[*] Notice Alert Sent to {}/{} people.\n {} user(s) were removed from database.".format(
+        done = "[*] Notice Alert Sent to {}/{} people.\n {} user(s) were not sent the message.".format(
             (int(total - failed)), total, failed
         )
         logging.critical(done)
@@ -120,12 +116,14 @@ def getDocId(notice):
             doc_file_id = r.json()["result"]["document"]["file_id"]
             return doc_file_id
         else:
+            logging.error(str(r.json()))
             raise Exception
     except Exception as e:
         logging.error(e)
         logging.info(
-            "[*] [{}]: Error Sending Logs File!!.".format(datetime.now()))
+            "[*] [{}]: Error Sending Logs File!!. - {}".format(datetime.now(),e))
         doc_file_id = 0
+        sendtelegram(2, AUTH_CHANNEL, "_", e)
         sys.exit()
         return doc_file_id
 
@@ -153,8 +151,12 @@ def sendtelegram(tipe, user_id, notice, caption):
         if r.status_code == 200 and r.json()["ok"]:
             return 200
         elif r.status_code == 403:
+            logging.info(
+                        "[*] Alert was not sent to {} due to being blocked. ".format(user_id))
             return 403
         else:
+            logging.info(
+                        "[*] Alert was not sent to {}. Request - {} ".format(user_id, r.json()))
             raise Exception
     except Exception as e:
         logging.error(e)
@@ -163,19 +165,20 @@ def sendtelegram(tipe, user_id, notice, caption):
 
 
 def check_status(user_id, usname):
+    print("Checking status")
     sendtelegram(
         2,
         user_id,
         "_",
         "Sending an alert in 5 seconds!\nPlease minimize the app if you want to check notification settings.",
     )
-    time.sleep(6)
     req_result = request_time(Client)
+    time.sleep(4)
     sendtelegram(
         2,
         user_id,
         "_",
-        "[*] Last Check - [{}]\nLast Notice - \n{}\nHave a Look - {}".format(
+        "[*] Last Check - [{}]\nLast Notice - \n{}\nHave a Look! {}".format(
             datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S"), req_result[1], req_result[2]
         ),

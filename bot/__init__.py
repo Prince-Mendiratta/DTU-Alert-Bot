@@ -42,15 +42,10 @@ START_COMMAND = get_env("START_COMMAND", "start")
 START_OTHER_USERS_TEXT = get_env(
     "START_OTHER_USERS_TEXT",
     (
-        "Hi. ☺️\n"
-        "Thank you for using me 😬\n\n"
-        "This is an Open Source Project available on "
-        "https://github.com/Dark-Princ3/DTU-Alert-Bot\n\n"
-        "🔔 You are <b>subscribed for notifications</b>, "
-        "In case of any new notice on DTU Website, you'll "
-        "recieve an alert. <i>Send</i> /help <i>for more info.</i>\n\n"
-        "⚠️ Please make sure the bot is unmuted and "
-        "notifications are allowed for the app.\n\n"
+        "👋 Hey! Welcome to <i>DTU Alert Bot</i>.\n\n"
+        "🔔 You are <b>subscribed for notifications</b>. In case of any new notice on DTU Website, you'll recieve an alert and the notice here itself. <i>Send</i> /help <i>for more info.</i>\n\n"
+        "⚠️ Please make sure the bot is <b>unmuted</b> and notifications are allowed for the app.\n\n"
+        "😄 This bot was developed and hosted by <b>Prince Mendiratta</b> (@anubisxx). This is an open source project available on https://bit.ly/32snhEw. Please <i>star and fork</i> the repo if you liked the bot!\n\n"
         "🔱 <b>Last check status-</b>\n{}"
     ),
 )
@@ -58,14 +53,12 @@ START_OTHER_USERS_TEXT = get_env(
 HELP_MEHH = get_env(
     "HELP_MEHH",
     (
-        "⭕️ This is free open source project developed by @anubisxx "
-        "to help get those important notices first.\n"
-        "😲 This bot uses the Notice's <i>uploaded date</i> and cross-checks "
-        "with records to determine if the site has been updated.\n\n"
-        "⚠️<b> Please unmute the bot and allow notifications for the app.</b>\n"
+        "⭕️ This project had been developed as a personal utility bot, which was later modified to be used by all and then submitted as part of <i>Innovative Project Work</i>, whose report can be found on <a href='https://github.com/Prince-Mendiratta/DTU-Alert-Bot/blob/master/Project_Report.pdf'>Github</a>.\n\n"
+        "😲 This bot creates a full record of the notices on the website and cross-checks with previous records to determine if the site has been updated and <b>instantly</b> sends you a notification to alert you.\n\n"
+        "⚠️ <b>Please unmute the bot and allow notifications for the app.</b>\n"
         "Send /status to check if the alerts work properly!\n\n"
-        "🔔 The bot will send alerts <b>twice</b> in case of an update. "
-        "If you want to unsubscribe, simple block the bot."
+        "😢 If you want to unsubscribe, simple block the bot\n\n."
+        "🫂 To <b>reach out to me</b> for feedbacks / complaints / suggestions, you can find my profiles and contact details using the /creator command."
     ),
 )
 # check online status of your bot
@@ -76,6 +69,18 @@ ONLINE_CHECK_START_TEXT = get_env(
         "<b>Current Users</b> - {}\n\n"
         "<b>Last check status</b> - \n{}"
     ),
+)
+# creator text
+CREATOR = get_env(
+    'CREATOR',
+    (
+        "🌀 Hello, this bot has been developed and maintained by <b>Prince Mendiratta</b>, a sophomore at <i>Delhi Technological University</i>.\n\n"
+        "♣️ A zestful learner with an upcoming Bachelors Degree in <i>Computer Engineering</i>, being particularly adept at working with Python, NodeJS, JavaScript, C++ , full stack web development, I love automating things.\nMy <i>hobbies</i> include reading novels, playing piano, being a foodie and chatting about <i>anything</i> under the sun. My <i>favourite artists</i> are Led Zepplin, Linkin Park, KK and Kishore Kumar.\n\n"
+        "💠 Do bots fascinate you as well? Check out my recent project, <a href='https://mybotsapp.com'>BotsApp</a>, where you can create your <b>personal userbot on WhatsApp</b>, absolutely free of cost and with <i>zero technical knowledge</i> required!\n\n"
+        "⭕️ Want to get premium apps for free? Check out my <a href='https://t.me/allapkforfree'>Telegram Channel</a> and <a href='https://moddingunited.xyz'>website</a>, dedicated to providing <b>safe and trusted modded application</b>, used by tens of thousands of people daily! \n\n"
+        "🔅 Have any suggestions / feedback / complaints or just wanna hangout? Don't hesitate to <b>reach out</b> to me on any of these platforms.\n"
+        "🔗 <a href='https://t.me/anubisxx'>Telegram</a> | <a href='https://www.linkedin.com/in/prince-mendiratta'>LinkedIn</a> | <a href='https://api.whatsapp.com/send/?phone=%2B917838204238&text=Hello+There!&app_absent=0'>WhatsApp</a> | <a href='https://github.com/Prince-Mendiratta'>Github</a>"
+    )
 )
 # Interval between each check
 REQUEST_INTERVAL = get_env("REQUEST_INTERVAL", 20)

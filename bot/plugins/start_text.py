@@ -44,7 +44,7 @@ get_mod(Client)
 async def num_start_message(client: Client, message: Message):
     with open("bot/plugins/check.txt", "r") as f:
         last_check = f.read()
-    await message.reply_text(START_OTHER_USERS_TEXT.format(last_check), quote=True)
+    await message.reply_text(START_OTHER_USERS_TEXT.format(last_check), quote=True, disable_web_page_preview=True)
     add_status, total_users = add_client_to_db(
         message.from_user.id, message.from_user.first_name, message.from_user.username
     )
