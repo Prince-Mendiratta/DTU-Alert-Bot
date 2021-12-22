@@ -40,7 +40,7 @@ def add_client_to_db(chat_id, f_name, usname):
     else:
         add_status = 0
     total_users = len(mycol.distinct("Chat Id"))
-    client.close()
+    # client.close()
     return add_status, total_users
 
 
@@ -48,7 +48,7 @@ def user_list():
     mydb = client.dtu
     mycol = mydb.users
     broadcast_list = mycol.distinct("Chat Id")
-    client.close()
+    # client.close()
     return broadcast_list
 
 
@@ -57,4 +57,4 @@ def remove_client_from_db(chat_id):
     mycol = mydb.users
     mycol.remove({"Chat Id": chat_id})
     print("[*] A user, {} has been deleted!".format(chat_id))
-    client.close()
+    # client.close()

@@ -63,38 +63,16 @@ def request_time(client: Client):
         top_link = top_link.split('.', 1)[1]
         top_link = 'dtu.ac.in' + top_link
     except IndexError:
-        top_link = 'http://dtu.ac.in/Web/notice/2021/april/file0428.pdf'
-    # dates = {}
-    # recorded_dates = {}
-    # tabs = 1
-    # while tabs < 9:
-    #     for i in range(1, 8):
-    #         try:
-    #             date_text = tree.xpath(
-    #                 '//*[@id="tab{}"]/div[1]/ul/li[{}]/small/em/i/text()'.format(tabs, i))
-    #             if date_text != []:
-    #                 dates["Date.{}.{}".format(tabs, i)] = date_text
-    #                 if not os.path.exists("recorded_status.json"):
-    #                     recorded_dates["Date.{}.{}".format(
-    #                         tabs, i)] = date_text
-    #                 i = i + 1
-    #             else:
-    #                 i = i + 1
-    #         except Exception as e:
-    #             print(e)
-    #             i = i + 1
-    #     tabs += 1
+        top_link = ''
 
-    tabs = [1,2,3,4,5,8]
-    tab_titles = ['Notices', 'Jobs', 'Tenders', 'Latest News', 'Forthcoming Events', '1st Year Notices']
+    tabs = [1,2,3,4,5]
+    tab_titles = ['Notices', 'Jobs', 'Tenders', 'Latest News', 'Forthcoming Events']
     y = 0
     records = {}
     titles = []
     for x in tabs:
-        print("Checking tab - " + str(x))
         tab = tab_titles[y]
         for i in range(1,15):
-            print("Checking index - " + str(i))
             try:
                 title = notice_title(x,i, tree)
                 link = notice_link(x, i, tree)
@@ -125,28 +103,8 @@ def request_time(client: Client):
             data = f.read()
         previous_records = json.loads(data)
         modified_key = dict_compare(records, previous_records)
-        print(modified_key)
         if modified_key != {}:
-            # try:
-            #     new_notice = tree.xpath(
-            #         '//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/text()'.format(tab))[0]
-            # except IndexError:
-            #     new_notice = tree.xpath(
-            #         '//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/font/text()'.format(tab))[0]
-            # if tab == 2:
-            #     context = tree.xpath(
-            #         '//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/text()')
-            #     try:
-            #         vacancy = tree.xpath(
-            #             '//*[@id="tab2"]/div[1]/ul/li[1]/h6/a/font/text()')
-            #         new_notice = context[0] + vacancy[0] + context[1]
-            #     except IndexError:
-            #         new_notice = context[0]
-            # new_link = tree.xpath(
-            #     '//*[@id="tab{}"]/div[1]/ul/li[1]/h6/a/@href'.format(tab))[0]
-            # new_link = new_link.split('.', 1)[1]
-            # new_link = 'dtu.ac.in' + new_link
-            # Tabb = Tabb[int(tab)]
+            print(modified_key)
             return_values = [200, top_notice,
                              top_link, modified_key["title"], modified_key["link"], modified_key["tab"]]
             return return_values
@@ -162,13 +120,10 @@ def notice_title(x, i, tree):
             raise IndexError
     except IndexError:
         try:
-            print("got error")
             notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/font/text()'.format(x,i))
             return notice[0]
         except Exception as e:
             print(e)
-            return ""
-    print("returning 0")
     return ""
 
 def notice_link(x, i, tree):

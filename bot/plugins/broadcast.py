@@ -56,7 +56,7 @@ def get_mod(client: Client):
         failed_users = []
         for i in range(0, (total)):
             try:
-                pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers!".format(
+                pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers from @DTUAlertBot!".format(
                     datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     req_result[3],
                     req_result[5],
@@ -165,19 +165,20 @@ def sendtelegram(tipe, user_id, notice, caption):
 
 
 def check_status(user_id, usname):
+    print("Checking status")
     sendtelegram(
         2,
         user_id,
         "_",
         "Sending an alert in 5 seconds!\nPlease minimize the app if you want to check notification settings.",
     )
-    time.sleep(6)
     req_result = request_time(Client)
+    time.sleep(4)
     sendtelegram(
         2,
         user_id,
         "_",
-        "[*] Last Check - [{}]\nLast Notice - \n{}\nHave a Look - {}".format(
+        "[*] Last Check - [{}]\nLast Notice - \n{}\nHave a Look! {}".format(
             datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S"), req_result[1], req_result[2]
         ),
