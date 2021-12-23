@@ -75,7 +75,7 @@ CREATOR = get_env(
     'CREATOR',
     (
         "🌀 Hello, this bot has been developed and maintained by <b>Prince Mendiratta</b>, a sophomore at <i>Delhi Technological University</i>.\n\n"
-        "♣️ A zestful learner with an upcoming Bachelors Degree in <i>Computer Engineering</i>, being particularly adept at working with Python, NodeJS, JavaScript, C++ , full stack web development, I love automating things.\nMy <i>hobbies</i> include reading novels, playing piano, being a foodie and chatting about <i>anything</i> under the sun. My <i>favourite artists</i> are Led Zepplin, Linkin Park, KK and Kishore Kumar.\n\n"
+        "♣️ A zestful learner with an upcoming Bachelors Degree in <i>Computer Engineering</i>, being particularly adept at working with Python, NodeJS, JavaScript, C++ , full stack web development, I love automating things.\n\n"
         "💠 Do bots fascinate you as well? Check out my recent project, <a href='https://mybotsapp.com'>BotsApp</a>, where you can create your <b>personal userbot on WhatsApp</b>, absolutely free of cost and with <i>zero technical knowledge</i> required!\n\n"
         "⭕️ Want to get premium apps for free? Check out my <a href='https://t.me/allapkforfree'>Telegram Channel</a> and <a href='https://moddingunited.xyz'>website</a>, dedicated to providing <b>safe and trusted modded application</b>, used by tens of thousands of people daily! \n\n"
         "🔅 Have any suggestions / feedback / complaints or just wanna hangout? Don't hesitate to <b>reach out</b> to me on any of these platforms.\n"
