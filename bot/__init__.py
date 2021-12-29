@@ -34,6 +34,12 @@ AUTH_CHANNEL = int(get_env("AUTH_CHANNEL", "-100", should_prompt=True))
 # MongoDB Database for the bot to operate
 MONGO_URL = get_env("MONGO_URL", should_prompt=True)
 TG_BOT_WORKERS = int(get_env("TG_BOT_WORKERS", "4"))
+# SHA Secret for Webhook event
+SHA_SECRET = get_env("SHA_SECRET", "mysecret")
+# Webhook address
+WEBHOOK_ADDRESS = get_env("WEBHOOK_ADDRESS", "https://google.com")
+# Use Webhooks
+WEBHOOK_INTEGRATION = bool(get_env("WEBHOOK_INTEGRATION", False))
 #
 COMMM_AND_PRE_FIX = get_env("COMMM_AND_PRE_FIX", "/")
 # start command
