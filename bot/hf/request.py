@@ -24,8 +24,9 @@ from pyrogram import (
     Client
 )
 from bot import (
-    AUTH_CHANNEL,
-    TG_BOT_TOKEN
+    SHA_SECRET,
+    WEBHOOK_INTEGRATION,
+    WEBHOOK_ADDRESS
 )
 from os import path
 from datetime import datetime
@@ -33,7 +34,10 @@ from bs4 import BeautifulSoup
 from requests.exceptions import Timeout
 from lxml import html
 from bot import logging
-
+import hashlib
+import hmac
+import base64
+import json
 
 def request_time(client: Client):
     print("[*] Checking DTU Website for notices now....")
@@ -104,7 +108,17 @@ def request_time(client: Client):
         previous_records = json.loads(data)
         modified_key = dict_compare(records, previous_records)
         if modified_key != {}:
-            print(modified_key)
+            logging.info(modified_key)
+            if(WEBHOOK_INTEGRATION):
+                try:
+                    data = {"notice": modified_key}
+                    xhash = sign_request(json.dumps(data))
+                    send_webhook_alert(xhash, json.dumps(data))
+                except Exception as e:
+                    logging.error(e)
+            else:
+                logging.info("Webhook not configured. Skipping webhook event.")
+            print("Moving on")
             return_values = [200, top_notice,
                              top_link, modified_key["title"], modified_key["link"], modified_key["tab"]]
             return return_values
@@ -130,7 +144,7 @@ def notice_link(x, i, tree):
     try:
         link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/@href'.format(x,i))[0]
         link = link.split('.', 1)[1]
-        link = 'dtu.ac.in' + link
+        link = 'http://dtu.ac.in' + link
         return link
     except Exception as e:
         print(e)
@@ -148,3 +162,18 @@ def dict_compare(d1, d2):
                 return i
 
     return {}
+
+def sign_request(body):
+
+    key = bytes(SHA_SECRET, 'UTF-8')
+    body = bytes(str(body), 'UTF-8')
+    
+    digester = hmac.new(key, body, hashlib.sha1)
+    signature1 = digester.hexdigest()
+    return str(signature1)
+
+def send_webhook_alert(xhash, body):
+    Headers = {"X-Hub-Signature": xhash, "Content-Type": "application/json"}
+    r = requests.post(url=WEBHOOK_ADDRESS, data=body, headers=Headers)
+    print(r)
+    logging.info("Webhook configured.\nBody - ." + body + "\nURL - " + WEBHOOK_ADDRESS)

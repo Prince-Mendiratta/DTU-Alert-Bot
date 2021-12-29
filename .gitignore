@@ -1,1 +1,4 @@
 config.env
+__pycache__/
+DTU-Alert-Bot.session
+venv/

@@ -103,6 +103,7 @@ def get_mod(client: Client):
 
 def getDocId(notice):
     try:
+        print("getting doc id for - " + notice)
         token = TG_BOT_TOKEN
         r = requests.get(
             "https://api.telegram.org/bot{}/sendDocument".format(token),
