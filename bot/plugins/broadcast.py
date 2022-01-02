@@ -44,49 +44,14 @@ def get_mod(client: Client):
             f.close()
     elif req_result[0] == 403:
         sendtelegram(2, AUTH_CHANNEL, "_", "Request Timed Out.")
-        mes2 = "[{}]: DTU Website has not been Updated.".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        mes2 = "[{}]: DTU Website has not been Updated.".format(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     elif req_result[0] == 200:
         mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
         )
-        file_id = getDocId(req_result[4])
-        broadcast_list = user_list()
-        total = len(broadcast_list)
-        failed = 0
-        failed_users = []
-        for i in range(0, (total)):
-            try:
-                pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers from @DTUAlertBot!".format(
-                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    req_result[3],
-                    req_result[5],
-                )
-                send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
-                if send_status == 200:
-                    i += 1
-                    logging.info(
-                        "[*] Alert Sent to {}/{} people.".format(i, total))
-                    time.sleep(0.3)
-                elif send_status == 403:
-                    failed += 1
-                    i += 1
-                    failed_users.append(broadcast_list[i])
-                    time.sleep(0.18)
-                else:
-                    continue
-            except Exception as e:
-                logging.error("[*] {}".format(e))
-
-
-        os.remove("bot/hf/recorded_status.json")
-        time.sleep(2)
-        done = "[*] Notice Alert Sent to {}/{} people.\n {} user(s) were not sent the message.".format(
-            (int(total - failed)), total, failed
-        )
-        logging.critical(done)
-        sendtelegram(
-            3, AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done
-        )
+        t1 = threading.Thread(target=broadcast, args=(req_result,))
+        t1.start()
     with open("bot/plugins/check.txt", "w+") as f:
         f.write(mes2)
         f.close()
@@ -122,7 +87,7 @@ def getDocId(notice):
     except Exception as e:
         logging.error(e)
         logging.info(
-            "[*] [{}]: Error Sending Logs File!!. - {}".format(datetime.now(),e))
+            "[*] [{}]: Error Sending Logs File!!. - {}".format(datetime.now(), e))
         doc_file_id = 0
         sendtelegram(2, AUTH_CHANNEL, "_", e)
         sys.exit()
@@ -153,11 +118,11 @@ def sendtelegram(tipe, user_id, notice, caption):
             return 200
         elif r.status_code == 403:
             logging.info(
-                        "[*] Alert was not sent to {} due to being blocked. ".format(user_id))
+                "[*] Alert was not sent to {} due to being blocked. ".format(user_id))
             return 403
         else:
             logging.info(
-                        "[*] Alert was not sent to {}. Request - {} ".format(user_id, r.json()))
+                "[*] Alert was not sent to {}. Request - {} ".format(user_id, r.json()))
             raise Exception
     except Exception as e:
         logging.error(e)
@@ -185,3 +150,43 @@ def check_status(user_id, usname):
         ),
     )
     logging.info("[*] {} requested for a status update!".format(usname))
+
+
+def broadcast(req_result):
+    file_id = getDocId(req_result[4])
+    broadcast_list = user_list()
+    total = len(broadcast_list)
+    failed = 0
+    failed_users = []
+    for i in range(0, (total)):
+        try:
+            pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers from @DTUAlertBot!".format(
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                req_result[3],
+                req_result[5],
+            )
+            send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
+            if send_status == 200:
+                i += 1
+                logging.info(
+                    "[*] Alert Sent to {}/{} people.".format(i, total))
+                time.sleep(0.3)
+            elif send_status == 403:
+                failed += 1
+                i += 1
+                failed_users.append(broadcast_list[i])
+                time.sleep(0.18)
+            else:
+                continue
+        except Exception as e:
+            logging.error("[*] {}".format(e))
+
+    os.remove("bot/hf/recorded_status.json")
+    time.sleep(4)
+    done = "[*] Notice Alert Sent to {}/{} people.\n {} user(s) were not sent the message.".format(
+        (int(total - failed)), total, failed
+    )
+    logging.critical(done)
+    sendtelegram(
+        3, AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done
+    )

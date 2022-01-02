@@ -16,7 +16,7 @@ from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden, PeerId
 from bot import logging
 import os
 import sys
-
+import threading
 
 
 @Client.on_message(
@@ -32,6 +32,10 @@ async def missed_noti(client: Client, message: Message):
             text="Format:\n/promo |message",
         )
         return
+    t1 = threading.Thread(target=promo, args=(mess,))
+    t1.start()
+
+def promo(mess):
     broadcast_list = user_list()
     total = len(broadcast_list)
     failed_users = []
@@ -58,4 +62,5 @@ async def missed_noti(client: Client, message: Message):
         3, AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done
     )
     logging.critical(done)
+    time.sleep(20)
     sys.exit()
