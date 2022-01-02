@@ -11,6 +11,29 @@ Need to be informed of notices which are being uploaded on [Delhi Technological 
 This project has been submitted as a part of Innovative Project Work for degree of BACHELOR OF TECHNOLOGY in COMPUTER SCIENCE AND ENGINEERING, Delhi Technological University, Delhi by Prince Mendiratta (me). Please do not use this project source code without proper citations or reference to avoid infringement of License. See the [LICENSE](./LICENSE) for more details.
 For reference, I have attached the [Project Report](https://github.com/Prince-Mendiratta/DTU-Alert-Bot/blob/master/Project_Report.pdf) itself as well in case someone wants some inspiration.
 
+## Workflow
+Since this bot was made keeping in mind that it will be hosted on [Heroku](https://heroku.com/) mostly, the project follows a [multi threaded approach](https://www.ibm.com/docs/en/aix/7.1?topic=concepts-multithreaded-programming) to prevent Heroku [dyno idling](https://devcenter.heroku.com/articles/free-dyno-hours#dyno-sleeping).  
+The main thread is responsible for handling user events and commands on the [Telegram bot](https://t.me/DTUAlertBot) and creating child sub threads for checking the website for notice updates.
+
+- The program creates sub threads, separate from the broadcast / telegram handling to check the website for updates at a set interval, which is 20 seconds by default.
+- Upon initalising, a [JSON](https://www.json.org/json-en.html) record is created consisting of the current top 20 notices on the site, under each tab (Latest News, Tenders etc.) and is saved.
+- Every 20 seconds, the site monitoring thread creates a JSON record and compares it with the saved JSON record. If there are any changes, the latest notice is sent to the notification subscribers on Telegram.
+
+### WhatsApp Integration
+- Bots on WhatsApp aren't easy to maintain and establish. Especially once mass messaging is involved, WhatsApp is pretty quick to **ban** accounts. Thus, it simply isn't possible to create a WhatsApp bot that can privately message people about notice updates.  
+- To overcome this, a few groups were created where people can get updates. This is the most feasable way to accomplish the purpose at the point this project was made.  
+- So, is the WhatsApp bot a separate bot with it's own notice checking threads? No. Instead, I have added [Webhook](https://en.wikipedia.org/wiki/Webhook) integration to this project itself.
+- In the monitoring thread itself, once any udpates are detected, a webhook event is sent to the WhatsApp bot, which then proceeds to send the alert to the groups in the broadcast list.
+
+### Webhook Security Measures
+If the notices are conveyed via webhooks, wouldn't it be a disaster if someone found out the webhook URL and hijack the bot, doing whatever they want?! To prevent such a situation from occuring I have added several preventive measures, some of which are as follows.  
+- The webhook URL itself is to be defined using [environment variables](https://en.wikipedia.org/wiki/Environment_variable). No hard-coded URL is used so that bypasses a lot of potential threats.  
+- Let's say somehow someone still managed to get the URL, then is the bot compromised? No. The webhook uses SHA1 encrypted signatures to verify if any event sent to it has been sent from the monitoring thread only. Any other calls to the webhooks are rejected before even being processed.  
+- The secret key for SHA1 has to be defined using environment variables, on both servers / dynos where the the telegram bot and the webhook are hosted.  
+- The webhook takes advantage of Heroku's SSL for HTTPS communication.
+- No valuable data is returned from the webhook so the sessions for WhatsApp are safe.
+- The webhook server runs in a [chroot-jail](https://docs.oracle.com/cd/E37670_01/E41138/html/ch24s05.html) which mitigates a lot of potential issues that could occur if the project was hosted on a VPS.
+
 ## Demo RoBot
 
 - [@DTUAlertBot](https://telegram.dog/DTUAlertBot)
