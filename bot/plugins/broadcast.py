@@ -153,6 +153,7 @@ def check_status(user_id, usname):
 
 
 def broadcast(req_result):
+    os.remove("bot/hf/recorded_status.json")
     file_id = getDocId(req_result[4])
     broadcast_list = user_list()
     total = len(broadcast_list)
@@ -181,7 +182,6 @@ def broadcast(req_result):
         except Exception as e:
             logging.error("[*] {}".format(e))
 
-    os.remove("bot/hf/recorded_status.json")
     time.sleep(4)
     done = "[*] Notice Alert Sent to {}/{} people.\n {} user(s) were not sent the message.".format(
         (int(total - failed)), total, failed
