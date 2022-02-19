@@ -129,13 +129,13 @@ def request_time(client: Client):
 def notice_title(x, i, tree):
     try:
         xpath = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/text()'.format(x,i))
-        return xpath[0]
+        return xpath[0].strip()
         if top_notice == ' ':
             raise IndexError
     except IndexError:
         try:
             notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/font/text()'.format(x,i))
-            return notice[0]
+            return notice[0].strip()
         except Exception as e:
             print(e)
     return ""
