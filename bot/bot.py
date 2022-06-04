@@ -17,7 +17,8 @@
 
 from pyrogram import (
     Client,
-    __version__
+    __version__,
+    enums
 )
 from . import (
     API_HASH,
@@ -48,7 +49,7 @@ class Bot(Client):
     async def start(self):
         await super().start()
         usr_bot_me = await self.get_me()
-        self.set_parse_mode("html")
+        self.set_parse_mode(enums.ParseMode.HTML)
         self.LOGGER(__name__).info(
             f"\n\n[*] @{usr_bot_me.username} based on Pyrogram v{__version__}\n"
             "[*] Try /start in chat."

@@ -85,7 +85,7 @@ def request_time(client: Client):
                     "link": link,
                     "tab": tab
                 }
-                if title != "":
+                if title != "" and link != "":
                     titles.append(notice)
             except Exception as e:
                 print("No title - " + str(e))
@@ -148,7 +148,7 @@ def notice_link(x, i, tree):
         return link
     except Exception as e:
         print(e)
-        return "http://dtu.ac.in/Web/notice/2021/april/file0428.pdf"
+        return ""
 
 
 def dict_compare(d1, d2):
