@@ -51,7 +51,8 @@ START_OTHER_USERS_TEXT = get_env(
         "👋 Hey! Welcome to <i>DTU Alert Bot</i>.\n\n"
         "🔔 You are <b>subscribed for notifications</b>. In case of any new notice on DTU Website, you'll recieve an alert and the notice here itself. <i>Send</i> /help <i>for more info.</i>\n\n"
         "⚠️ Please make sure the bot is <b>unmuted</b> and notifications are allowed for the app.\n\n"
-        "😄 This bot was developed and hosted by <b>Prince Mendiratta</b> (@anubisxx). This is an open source project available on https://bit.ly/32snhEw. Please <i>star and fork</i> the repo if you liked the bot!\n\n"
+        "😌 DTU Notice Alert Bot is now available on <b>WhatsApp</b> as well! You can join the group using this link - https://bit.ly/DTUAlertBotWhatsApp .\n\n"
+        "😄 This bot was developed and hosted by <b>Prince Mendiratta</b> (@anubisxx). This is an open source project available on https://bit.ly/32snhEw.\n\n"
         "🔱 <b>Last check status-</b>\n{}"
     ),
 )
