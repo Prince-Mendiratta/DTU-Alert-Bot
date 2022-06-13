@@ -3,3 +3,6 @@ __pycache__/
 DTU-Alert-Bot.session
 venv/
 .vscode/
+DTUAlertBot.log
+DTU-Alert-Bot.session-journal
+check.txt
