@@ -38,11 +38,16 @@ import hashlib
 import hmac
 import base64
 import json
+from requests.adapters import HTTPAdapter, Retry
 
 def request_time(client: Client):
     print("[*] Checking DTU Website for notices now....")
     try:
-        r = requests.get(('http://dtu.ac.in/'), timeout=25)
+        s = requests.Session()
+        retries = Retry(total=500,
+                backoff_factor=0.1,)
+        s.mount('http://', HTTPAdapter(max_retries=retries))
+        r = s.get(('http://dtu.ac.in/'), timeout=25)
     except Timeout:
         print("[{}]: The request timed out.".format(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
