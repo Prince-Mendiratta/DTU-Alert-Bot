@@ -11,6 +11,10 @@ Need to be informed of notices which are being uploaded on [Delhi Technological 
 This project has been submitted as a part of Innovative Project Work for degree of BACHELOR OF TECHNOLOGY in COMPUTER SCIENCE AND ENGINEERING, Delhi Technological University, Delhi by Prince Mendiratta (me). Please do not use this project source code without proper citations or reference to avoid infringement of License. See the [LICENSE](./LICENSE) for more details.
 For reference, I have attached the [Project Report](https://github.com/Prince-Mendiratta/DTU-Alert-Bot/blob/master/Project_Report.pdf) itself as well in case someone wants some inspiration.
 
+## Flowcharts
+- [Web Scraping](https://whimsical.com/flowchart-request-py-MzWDL9YLMW4FweZLM9HbaY)
+- [Broadcasting](https://whimsical.com/flowchart-broadcast-py-LYPjcpVLRpH84cFyDApvwe)
+
 ## Workflow
 Since this bot was made keeping in mind that it will be hosted on [Heroku](https://heroku.com/) mostly, the project follows a [multi threaded approach](https://www.ibm.com/docs/en/aix/7.1?topic=concepts-multithreaded-programming) to prevent Heroku [dyno idling](https://devcenter.heroku.com/articles/free-dyno-hours#dyno-sleeping).  
 The main thread is responsible for handling user events and commands on the [Telegram bot](https://t.me/DTUAlertBot) and creating child sub threads for checking the website for notice updates.
