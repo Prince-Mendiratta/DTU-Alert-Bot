@@ -20,6 +20,8 @@ import os
 import os.path
 import requests
 import threading
+import subprocess
+import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from bot import AUTH_CHANNEL, REQUEST_INTERVAL, TG_BOT_TOKEN, MONGO_URL, COMMM_AND_PRE_FIX
@@ -29,9 +31,8 @@ from bot.mongodb.users import user_list, remove_client_from_db
 from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden
 from bot import logging
-import subprocess
-import asyncio
-
+from requests.adapters import HTTPAdapter, Retry
+from requests.exceptions import Timeout
 
 @Client.on_message(
     filters.command("init", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)

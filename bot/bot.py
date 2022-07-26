@@ -29,6 +29,7 @@ from . import (
 )
 import threading
 from bot.__banner.banner import bannerTop
+import sys
 
 
 class Bot(Client):
@@ -61,3 +62,4 @@ class Bot(Client):
     async def stop(self, *args):
         await super().stop()
         self.LOGGER(__name__).info("[*] DTU-Alert-Bot stopped. Bye.")
+        sys.exit()
