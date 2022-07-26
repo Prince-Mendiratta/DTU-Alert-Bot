@@ -77,6 +77,9 @@ If the notices are conveyed via webhooks, wouldn't it be a disaster if someone f
 - Once setup is done, enter `python3 -m bot`
 - To enter optional variables, copy the key from sample_config.env and paste in config.env.
 
+#### Keep the script running using PM2
+- pm2 start python3 --name alertbot -- -m bot
+
 ## ENVironment VARiables
 
 #### Mandatory Environment Variables
