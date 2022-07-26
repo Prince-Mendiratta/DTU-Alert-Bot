@@ -111,21 +111,22 @@ def request_time(client: Client):
         with open("bot/hf/recorded_status.json", "r") as f:
             data = f.read()
         previous_records = json.loads(data)
-        modified_key = dict_compare(records, previous_records)
-        if modified_key != {}:
-            logging.info(modified_key)
+        modified_keys = dict_compare(records, previous_records)
+        if modified_keys != []:
+            logging.info(modified_keys)
             if(WEBHOOK_INTEGRATION):
                 try:
-                    data = {"notice": modified_key}
+                    data = {"notice": modified_keys}
                     xhash = sign_request(json.dumps(data))
                     send_webhook_alert(xhash, json.dumps(data))
                 except Exception as e:
                     logging.error(e)
             else:
                 logging.info("Webhook not configured. Skipping webhook event.")
-            print("Moving on")
+            # return_values = [200, top_notice,
+            #                  top_link, modified_keys["title"], modified_keys["link"], modified_keys["tab"]]
             return_values = [200, top_notice,
-                             top_link, modified_key["title"], modified_key["link"], modified_key["tab"]]
+                             top_link, modified_keys]
             return return_values
         else:
             return_values = [404, top_notice, top_link, ' ', ' ']
@@ -160,13 +161,13 @@ def dict_compare(d1, d2):
     d1_keys = set(d1.keys())
     d2_keys = set(d2.keys())
     shared_keys = d1_keys.intersection(d2_keys)
-    out = {}
+    out = []
     for o in shared_keys:
         for i in d1[o]:
             if i not in d2[o]:
-                return i
+                out.append(i)
 
-    return {}
+    return out
 
 def sign_request(body):
 

@@ -22,7 +22,7 @@ import requests
 import threading
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from bot import AUTH_CHANNEL, REQUEST_INTERVAL, TG_BOT_TOKEN, MONGO_URL
+from bot import AUTH_CHANNEL, REQUEST_INTERVAL, TG_BOT_TOKEN, MONGO_URL, COMMM_AND_PRE_FIX
 from os import path
 from bot.hf.request import request_time
 from bot.mongodb.users import user_list, remove_client_from_db
@@ -30,10 +30,14 @@ from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden
 from bot import logging
 import subprocess
+import asyncio
 
 
-def get_mod(client: Client):
-    req_result = request_time(Client)
+@Client.on_message(
+    filters.command("init", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
+)
+def get_mod(client: Client, message: Message):
+    req_result = request_time(client)
     if req_result[0] == 404:
         mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
@@ -50,14 +54,18 @@ def get_mod(client: Client):
         mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
         )
-        t1 = threading.Thread(target=broadcast, args=(req_result,))
-        t1.start()
+        new_notices = req_result[3]
+        for notice in new_notices:
+            logging.info("Beginning broadcast for {}.\n".format(notice["title"]))
+            t1 = threading.Thread(target=intitateBroadcast, args=(notice,client,))
+            t1.start()
+        os.remove("bot/hf/recorded_status.json")
     with open("bot/plugins/check.txt", "w+") as f:
         f.write(mes2)
         f.close()
     try:
         looped = threading.Timer(
-            int(REQUEST_INTERVAL), lambda: get_mod(Client))
+            int(REQUEST_INTERVAL), lambda: get_mod(client, message))
         looped.daemon = True
         looped.start()
     except Exception as e:
@@ -66,32 +74,60 @@ def get_mod(client: Client):
     return mes2
 
 
-def getDocId(notice):
+# def getDocId(notice):
+#     try:
+#         print("getting doc id for - " + notice)
+#         token = TG_BOT_TOKEN
+#         r = requests.get(
+#             "https://api.telegram.org/bot{}/sendDocument".format(token),
+#             params={
+#                 "chat_id": AUTH_CHANNEL,
+#                 "document": notice,
+#                 "caption": "[Logs] New Notice.",
+#             },
+#         )
+#         if r.status_code == 200 and r.json()["ok"]:
+#             doc_file_id = r.json()["result"]["document"]["file_id"]
+#             return doc_file_id
+#         else:
+#             logging.error(str(r.json()))
+#             raise Exception
+#     except Exception as e:
+#         logging.error(e)
+#         logging.info(
+#             "[*] [{}]: Error Sending Logs File!!. - {}".format(datetime.now(), e))
+#         doc_file_id = 0
+#         sendtelegram(2, AUTH_CHANNEL, "_", e)
+#         sys.exit()
+#         return doc_file_id
+
+# Use local file to send alert
+async def getDocId(notice, client: Client):
+    filename = os.path.basename(notice)
     try:
-        print("getting doc id for - " + notice)
-        token = TG_BOT_TOKEN
-        r = requests.get(
-            "https://api.telegram.org/bot{}/sendDocument".format(token),
-            params={
-                "chat_id": AUTH_CHANNEL,
-                "document": notice,
-                "caption": "[Logs] New Notice.",
-            },
+        s = requests.Session()
+        retries = Retry(total=500,
+                backoff_factor=0.1,)
+        s.mount('http://', HTTPAdapter(max_retries=retries))
+        res = s.get((notice), timeout=25)
+    except Timeout:
+        print("[{}]: The request timed out.".format(
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        return 0
+    res = requests.get(notice)
+    with open(filename, 'wb') as f:
+        f.write(res.content)
+    filepath = os.getcwd() + '/' + filename
+    bruh = await client.send_document(
+            chat_id=AUTH_CHANNEL,
+            document=filepath,
         )
-        if r.status_code == 200 and r.json()["ok"]:
-            doc_file_id = r.json()["result"]["document"]["file_id"]
-            return doc_file_id
-        else:
-            logging.error(str(r.json()))
-            raise Exception
+    try:
+        fileId = bruh.document.file_id
+        os.remove(filepath)
+        return fileId
     except Exception as e:
         logging.error(e)
-        logging.info(
-            "[*] [{}]: Error Sending Logs File!!. - {}".format(datetime.now(), e))
-        doc_file_id = 0
-        sendtelegram(2, AUTH_CHANNEL, "_", e)
-        sys.exit()
-        return doc_file_id
 
 
 def sendtelegram(tipe, user_id, notice, caption):
@@ -152,9 +188,20 @@ def check_status(user_id, usname):
     logging.info("[*] {} requested for a status update!".format(usname))
 
 
-def broadcast(req_result):
-    os.remove("bot/hf/recorded_status.json")
-    file_id = getDocId(req_result[4])
+async def getDocIdAsync(req_result, client: Client):
+    file_id = await getDocId(req_result["link"], client)
+    return file_id
+
+def intitateBroadcast(req_result, client: Client):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    file_id = loop.run_until_complete(getDocIdAsync(req_result, client))
+    loop.close()
+    if file_id == 0:
+        return
+    broadcast(req_result, file_id, client)
+
+def broadcast(req_result, file_id, client: Client):
     broadcast_list = user_list()
     total = len(broadcast_list)
     failed = 0
@@ -163,8 +210,8 @@ def broadcast(req_result):
         try:
             pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers from @DTUAlertBot!".format(
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                req_result[3],
-                req_result[5],
+                req_result["title"],
+                req_result["tab"],
             )
             send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
             if send_status == 200:

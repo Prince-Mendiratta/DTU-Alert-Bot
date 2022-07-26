@@ -28,6 +28,7 @@ from . import (
     TG_BOT_WORKERS
 )
 import threading
+from bot.__banner.banner import bannerTop
 
 
 class Bot(Client):
@@ -50,9 +51,11 @@ class Bot(Client):
         await super().start()
         usr_bot_me = await self.get_me()
         self.set_parse_mode(enums.ParseMode.HTML)
+        banner = bannerTop()
+        self.LOGGER(__name__).info("\n{}".format(banner))
         self.LOGGER(__name__).info(
             f"\n\n[*] @{usr_bot_me.username} based on Pyrogram v{__version__}\n"
-            "[*] Try /start in chat."
+            "[*] Send /init in chat to start scraping.\n\n"
         )
 
     async def stop(self, *args):

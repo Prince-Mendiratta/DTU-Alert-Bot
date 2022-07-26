@@ -6,3 +6,4 @@ venv/
 DTUAlertBot.log
 DTU-Alert-Bot.session-journal
 check.txt
+*.pdf

@@ -26,17 +26,17 @@ async def missed_noti(client: Client, message: Message):
     inputm = message.text
     try:
         comm, url, title, tab = inputm.split("|")
+        fileId = await getDocId(url, client)
     except:
         await client.send_message(
             chat_id=AUTH_CHANNEL,
             text="Format:\n/send|notice_url|notice_title|notice_tab",
         )
         return
-    t1 = threading.Thread(target=send, args=(url, title, tab,))
+    t1 = threading.Thread(target=send, args=(url, title, tab, fileId,))
     t1.start()
 
-def send(url, title, tab):
-    file_id = getDocId(url)
+def send(url, title, tab, file_id):
     broadcast_list = user_list()
     total = len(broadcast_list)
     alerts = 1
@@ -53,7 +53,7 @@ def send(url, title, tab):
                     i += 1
                     logging.info("[*] Alert Sent to {}/{} people.".format(i, total))
                     time.sleep(0.3)
-                elif send_status == 404:
+                elif send_status == 403:
                     failed += 1
                     i += 1
                     failed_users.append(broadcast_list[i])
