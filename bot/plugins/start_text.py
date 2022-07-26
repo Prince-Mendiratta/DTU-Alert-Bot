@@ -33,7 +33,8 @@ from bot import logging
 
 
 @Client.on_message(
-    filters.command(START_COMMAND, COMMM_AND_PRE_FIX) & ~filters.chat(AUTH_CHANNEL)
+    filters.command(START_COMMAND, COMMM_AND_PRE_FIX) & ~filters.chat(
+        AUTH_CHANNEL)
 )
 async def num_start_message(client: Client, message: Message):
     with open("bot/plugins/check.txt", "r") as f:
@@ -53,7 +54,8 @@ async def num_start_message(client: Client, message: Message):
 
 
 @Client.on_message(
-    filters.command(START_COMMAND, COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
+    filters.command(START_COMMAND, COMMM_AND_PRE_FIX) & filters.chat(
+        AUTH_CHANNEL)
 )
 async def nimda_start_message(client: Client, message: Message):
     with open("bot/plugins/check.txt", "r") as f:

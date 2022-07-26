@@ -40,19 +40,20 @@ import base64
 import json
 from requests.adapters import HTTPAdapter, Retry
 
+
 def request_time(client: Client):
     print("[*] Checking DTU Website for notices now....")
     try:
         s = requests.Session()
         retries = Retry(total=500,
-                backoff_factor=0.1,)
+                        backoff_factor=0.1,)
         s.mount('http://', HTTPAdapter(max_retries=retries))
         r = s.get(('http://dtu.ac.in/'), timeout=25)
     except Timeout:
         print("[{}]: The request timed out.".format(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         return [403]
-    
+
     tree = html.fromstring(r.content)
     try:
         top_notice = tree.xpath(
@@ -74,17 +75,18 @@ def request_time(client: Client):
     except IndexError:
         top_link = ''
 
-    tabs = [1,2,3,4,5]
-    tab_titles = ['Notices', 'Jobs', 'Tenders', 'Latest News', 'Forthcoming Events']
+    tabs = [1, 2, 3, 4, 5]
+    tab_titles = ['Notices', 'Jobs', 'Tenders',
+                  'Latest News', 'Forthcoming Events']
     y = 0
     records = {}
     titles = []
-    for x in tabs:
+    for tab_iterator in tabs:
         tab = tab_titles[y]
-        for i in range(1,15):
+        for notice_iterator in range(1, 15):
             try:
-                title = notice_title(x,i, tree)
-                link = notice_link(x, i, tree)
+                title = notice_title(tab_iterator, notice_iterator, tree)
+                link = notice_link(tab_iterator, notice_iterator, tree)
                 notice = {
                     "title": title,
                     "link": link,
@@ -97,8 +99,8 @@ def request_time(client: Client):
                 pass
         records[tab] = titles
         titles = []
-        y+=1
-    
+        y += 1
+
     previous_records = records
     if not path.exists("bot/hf/recorded_status.json"):
         data = json.dumps(previous_records)
@@ -132,25 +134,33 @@ def request_time(client: Client):
             return_values = [404, top_notice, top_link, ' ', ' ']
             return return_values
 
-def notice_title(x, i, tree):
+
+def notice_title(tab_iterator, notice_iterator, tree):
     try:
-        xpath = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/text()'.format(x,i))
+        xpath = tree.xpath(
+            '//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/text()'.format(tab_iterator, notice_iterator))
         return xpath[0].strip()
         if top_notice == ' ':
             raise IndexError
     except IndexError:
         try:
-            notice = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/font/text()'.format(x,i))
+            notice = tree.xpath(
+                '//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/font/text()'.format(tab_iterator, notice_iterator))
             return notice[0].strip()
         except Exception as e:
             print(e)
     return ""
 
-def notice_link(x, i, tree):
+
+def notice_link(tab_iterator, notice_iterator, tree):
     try:
-        link = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/@href'.format(x,i))[0]
+        link = tree.xpath(
+            '//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/@href'.format(tab_iterator, notice_iterator))[0]
         link = link.split('.', 1)[1]
         link = 'http://dtu.ac.in' + link
+        # No document attached
+        if(link.endswith('/')):
+            return ""
         return link
     except Exception as e:
         print(e)
@@ -169,17 +179,20 @@ def dict_compare(d1, d2):
 
     return out
 
+
 def sign_request(body):
 
     key = bytes(SHA_SECRET, 'UTF-8')
     body = bytes(str(body), 'UTF-8')
-    
+
     digester = hmac.new(key, body, hashlib.sha1)
     signature1 = digester.hexdigest()
     return str(signature1)
+
 
 def send_webhook_alert(xhash, body):
     Headers = {"X-Hub-Signature": xhash, "Content-Type": "application/json"}
     r = requests.post(url=WEBHOOK_ADDRESS, data=body, headers=Headers)
     print(r)
-    logging.info("Webhook configured.\nBody - ." + body + "\nURL - " + WEBHOOK_ADDRESS)
+    logging.info("Webhook configured.\nBody - ." +
+                 body + "\nURL - " + WEBHOOK_ADDRESS)

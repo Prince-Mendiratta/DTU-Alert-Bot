@@ -34,6 +34,7 @@ from bot import logging
 from requests.adapters import HTTPAdapter, Retry
 from requests.exceptions import Timeout
 
+
 @Client.on_message(
     filters.command("init", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
 )
@@ -57,8 +58,10 @@ def get_mod(client: Client, message: Message):
         )
         new_notices = req_result[3]
         for notice in new_notices:
-            logging.info("Beginning broadcast for {}.\n".format(notice["title"]))
-            t1 = threading.Thread(target=intitateBroadcast, args=(notice,client,))
+            logging.info(
+                "Beginning broadcast for {}.\n".format(notice["title"]))
+            t1 = threading.Thread(target=intitateBroadcast,
+                                  args=(notice, client,))
             t1.start()
         os.remove("bot/hf/recorded_status.json")
     with open("bot/plugins/check.txt", "w+") as f:
@@ -108,7 +111,7 @@ async def getDocId(notice, client: Client):
     try:
         s = requests.Session()
         retries = Retry(total=500,
-                backoff_factor=0.1,)
+                        backoff_factor=0.1,)
         s.mount('http://', HTTPAdapter(max_retries=retries))
         res = s.get((notice), timeout=25)
     except Timeout:
@@ -120,9 +123,9 @@ async def getDocId(notice, client: Client):
         f.write(res.content)
     filepath = os.getcwd() + '/' + filename
     bruh = await client.send_document(
-            chat_id=AUTH_CHANNEL,
-            document=filepath,
-        )
+        chat_id=AUTH_CHANNEL,
+        document=filepath,
+    )
     try:
         fileId = bruh.document.file_id
         os.remove(filepath)
@@ -193,6 +196,7 @@ async def getDocIdAsync(req_result, client: Client):
     file_id = await getDocId(req_result["link"], client)
     return file_id
 
+
 def intitateBroadcast(req_result, client: Client):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -200,7 +204,8 @@ def intitateBroadcast(req_result, client: Client):
     loop.close()
     if file_id == 0:
         return
-    broadcast(req_result, file_id, client)
+    # broadcast(req_result, file_id, client)
+
 
 def broadcast(req_result, file_id, client: Client):
     broadcast_list = user_list()

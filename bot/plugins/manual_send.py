@@ -35,6 +35,7 @@ async def missed_noti(client: Client, message: Message):
     t1 = threading.Thread(target=promo, args=(mess,))
     t1.start()
 
+
 def promo(mess):
     broadcast_list = user_list()
     total = len(broadcast_list)
@@ -45,7 +46,8 @@ def promo(mess):
             send_status = sendtelegram(2, broadcast_list[i], '', mess)
             if send_status == 200:
                 i += 1
-                logging.info("[*] Alert Sent to {}/{} people.".format(i, total))
+                logging.info(
+                    "[*] Alert Sent to {}/{} people.".format(i, total))
                 time.sleep(0.3)
             elif send_status == 403:
                 failed += 1
