@@ -39,34 +39,40 @@ from requests.exceptions import Timeout
     filters.command("init", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
 )
 def get_mod(client: Client, message: Message):
-    req_result = request_time(client)
-    if req_result[0] == 404:
-        mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
-        )
-        logging.info("[*] DTU Website has not been Updated.")
+    try:
+        req_result = request_time(client)
+        if req_result[0] == 404:
+            mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
+            )
+            logging.info("[*] DTU Website has not been Updated.")
+            with open("bot/plugins/check.txt", "w+") as f:
+                f.write(mes2)
+                f.close()
+        elif req_result[0] == 403:
+            sendtelegram(2, AUTH_CHANNEL, "_", "Request Timed Out.")
+            mes2 = "[{}]: DTU Website has not been Updated.".format(
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        elif req_result[0] == 200:
+            mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
+            )
+            new_notices = req_result[3]
+            for notice in new_notices:
+                logging.info(
+                    "Beginning broadcast for {}.\n".format(notice["title"]))
+                t1 = threading.Thread(target=intitateBroadcast,
+                                      args=(notice, client,))
+                t1.start()
+            os.remove("bot/hf/recorded_status.json")
         with open("bot/plugins/check.txt", "w+") as f:
             f.write(mes2)
             f.close()
-    elif req_result[0] == 403:
-        sendtelegram(2, AUTH_CHANNEL, "_", "Request Timed Out.")
-        mes2 = "[{}]: DTU Website has not been Updated.".format(
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    elif req_result[0] == 200:
-        mes2 = "[{}]: DTU Website has not been Updated.\nLast Notice - \n{}".format(
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"), req_result[1]
-        )
-        new_notices = req_result[3]
-        for notice in new_notices:
-            logging.info(
-                "Beginning broadcast for {}.\n".format(notice["title"]))
-            t1 = threading.Thread(target=intitateBroadcast,
-                                  args=(notice, client,))
-            t1.start()
+        return mes2
+    except Exception as e:
+        logging.error(e)
         os.remove("bot/hf/recorded_status.json")
-    with open("bot/plugins/check.txt", "w+") as f:
-        f.write(mes2)
-        f.close()
+        client.send_message(AUTH_CHANNEL, "Got fatal error - " + str(e))
     try:
         looped = threading.Timer(
             int(REQUEST_INTERVAL), lambda: get_mod(client, message))
@@ -75,7 +81,6 @@ def get_mod(client: Client, message: Message):
     except Exception as e:
         logging.critical(e)
         sendtelegram(2, AUTH_CHANNEL, "_", e)
-    return mes2
 
 
 # def getDocId(notice):
@@ -204,7 +209,7 @@ def intitateBroadcast(req_result, client: Client):
     loop.close()
     if file_id == 0:
         return
-    # broadcast(req_result, file_id, client)
+    broadcast(req_result, file_id, client)
 
 
 def broadcast(req_result, file_id, client: Client):

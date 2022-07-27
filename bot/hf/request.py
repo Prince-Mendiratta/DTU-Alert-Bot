@@ -119,8 +119,8 @@ def request_time(client: Client):
             if(WEBHOOK_INTEGRATION):
                 try:
                     data = {"notice": modified_keys}
-                    xhash = sign_request(json.dumps(data))
-                    send_webhook_alert(xhash, json.dumps(data))
+                    xhash = sign_request(json.dumps(data, separators=(',', ':')))
+                    send_webhook_alert(xhash, json.dumps(data, separators=(',', ':')))
                 except Exception as e:
                     logging.error(e)
             else:
@@ -139,14 +139,14 @@ def notice_title(tab_iterator, notice_iterator, tree):
     try:
         xpath = tree.xpath(
             '//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/text()'.format(tab_iterator, notice_iterator))
-        return xpath[0].strip()
+        return xpath[0].strip().replace("\u201c", "").replace("\u201d", "")
         if top_notice == ' ':
             raise IndexError
     except IndexError:
         try:
             notice = tree.xpath(
                 '//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a/font/text()'.format(tab_iterator, notice_iterator))
-            return notice[0].strip()
+            return notice[0].strip().replace("\u201c", "").replace("\u201d", "")
         except Exception as e:
             print(e)
     return ""
