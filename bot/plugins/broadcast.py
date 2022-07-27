@@ -68,19 +68,19 @@ def get_mod(client: Client, message: Message):
         with open("bot/plugins/check.txt", "w+") as f:
             f.write(mes2)
             f.close()
+        try:
+            looped = threading.Timer(
+                int(REQUEST_INTERVAL), lambda: get_mod(client, message))
+            looped.daemon = True
+            looped.start()
+        except Exception as e:
+            logging.critical(e)
+            sendtelegram(2, AUTH_CHANNEL, "_", e)
         return mes2
     except Exception as e:
         logging.error(e)
         os.remove("bot/hf/recorded_status.json")
         client.send_message(AUTH_CHANNEL, "Got fatal error - " + str(e))
-    try:
-        looped = threading.Timer(
-            int(REQUEST_INTERVAL), lambda: get_mod(client, message))
-        looped.daemon = True
-        looped.start()
-    except Exception as e:
-        logging.critical(e)
-        sendtelegram(2, AUTH_CHANNEL, "_", e)
 
 
 # def getDocId(notice):

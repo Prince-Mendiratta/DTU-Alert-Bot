@@ -8,6 +8,9 @@ from bot import (
     COMMM_AND_PRE_FIX,
     LOG_FILE_ZZGEVC,
     MONGO_URL,
+    SHA_SECRET,
+    WEBHOOK_ADDRESS,
+    WEBHOOK_INTEGRATION
 )
 from bot.mongodb.users import user_list, remove_client_from_db
 from .broadcast import getDocId, sendtelegram
@@ -17,7 +20,10 @@ from bot import logging
 import os
 import sys
 import threading
-
+import hashlib
+import hmac
+import requests
+import json
 
 @Client.on_message(
     filters.command("send", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
@@ -27,6 +33,21 @@ async def missed_noti(client: Client, message: Message):
     try:
         comm, url, title, tab = inputm.split("|")
         fileId = await getDocId(url, client)
+        if(WEBHOOK_INTEGRATION):
+            try:
+                data = {"notice": [{
+                    "title": title,
+                    "link": url,
+                    "tab": tab
+                }]}
+                xhash = sign_request(json.dumps(
+                    data, separators=(',', ':')))
+                send_webhook_alert(xhash, json.dumps(
+                    data, separators=(',', ':')))
+            except Exception as e:
+                logging.error(e)
+        else:
+            logging.info("Webhook not configured. Skipping webhook event.")
     except:
         await client.send_message(
             chat_id=AUTH_CHANNEL,
@@ -36,6 +57,34 @@ async def missed_noti(client: Client, message: Message):
     t1 = threading.Thread(target=send, args=(url, title, tab, fileId,))
     t1.start()
 
+@Client.on_message(
+    filters.command("wasend", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
+)
+async def missed_noti(client: Client, message: Message):
+    inputm = message.text
+    try:
+        comm, url, title, tab = inputm.split("|")
+        if(WEBHOOK_INTEGRATION):
+            try:
+                data = {"notice": [{
+                    "title": title,
+                    "link": url,
+                    "tab": tab
+                }]}
+                xhash = sign_request(json.dumps(
+                    data, separators=(',', ':')))
+                send_webhook_alert(xhash, json.dumps(
+                    data, separators=(',', ':')))
+            except Exception as e:
+                logging.error(e)
+        else:
+            logging.info("Webhook not configured. Skipping webhook event.")
+    except:
+        await client.send_message(
+            chat_id=AUTH_CHANNEL,
+            text="Format:\n/send|notice_url|notice_title|notice_tab",
+        )
+        return
 
 def send(url, title, tab, file_id):
     broadcast_list = user_list()
@@ -76,3 +125,20 @@ def send(url, title, tab, file_id):
     time.sleep(20)
     print("exiting")
     sys.exit()
+
+def sign_request(body):
+
+    key = bytes(SHA_SECRET, 'UTF-8')
+    body = bytes(str(body), 'UTF-8')
+
+    digester = hmac.new(key, body, hashlib.sha1)
+    signature1 = digester.hexdigest()
+    return str(signature1)
+
+
+def send_webhook_alert(xhash, body):
+    Headers = {"X-Hub-Signature": xhash, "Content-Type": "application/json"}
+    r = requests.post(url=WEBHOOK_ADDRESS, data=body, headers=Headers)
+    print(r)
+    logging.info("Webhook configured.\nBody - ." +
+                 body + "\nURL - " + WEBHOOK_ADDRESS)
