@@ -60,7 +60,7 @@ async def missed_noti(client: Client, message: Message):
 @Client.on_message(
     filters.command("wasend", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
 )
-async def missed_noti(client: Client, message: Message):
+async def wa_missed_noti(client: Client, message: Message):
     inputm = message.text
     try:
         comm, url, title, tab = inputm.split("|")
