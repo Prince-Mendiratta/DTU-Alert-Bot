@@ -15,29 +15,26 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import os.path
+import sys
 import requests
-from requests.exceptions import Timeout
-from requests.adapters import HTTPAdapter, Retry
-from pyrogram import (
-    Client
-)
-from bot import (
-    SHA_SECRET,
-    WEBHOOK_INTEGRATION,
-    WEBHOOK_ADDRESS,
-    AUTH_CHANNEL,
-    logging
-)
-from bot.plugins.broadcast import sendtelegram
-from os import path
+import time
+import json
+from os import path, sep
 from datetime import datetime
+from bs4 import BeautifulSoup
+from requests.exceptions import Timeout
 from lxml import html
+from lxml.etree import tostring
 import hashlib
 import hmac
+import base64
 import json
+from requests.adapters import HTTPAdapter, Retry
+# from .bot.plugins.broadcast import sendtelegram
 
 
-def request_time(client: Client):
+def request_time():
     print("[*] Checking DTU Website for notices now....")
     try:
         s = requests.Session()
@@ -55,7 +52,6 @@ def request_time(client: Client):
         top_notice = tree.xpath(
             '//*[@id="tab4"]/div[1]/ul/li[1]/h6/a')[0].text_content().strip().replace("\u201c", "").replace("\u201d", "")
     except Exception as e:
-        top_notice = '-Please check yourself-'
         print('TOP NOTICE TITLE ERROR ' + str(e))
     
     try:
@@ -118,20 +114,12 @@ def request_time(client: Client):
         previous_records = json.loads(data)
         modified_keys = dict_compare(records, previous_records)
         if modified_keys != []:
-            logging.info(modified_keys)
-            if(WEBHOOK_INTEGRATION):
-                try:
-                    data = {"notice": modified_keys}
-                    xhash = sign_request(json.dumps(data, separators=(',', ':')))
-                    send_webhook_alert(xhash, json.dumps(data, separators=(',', ':')))
-                except Exception as e:
-                    logging.error(e)
-            else:
-                logging.info("Webhook not configured. Skipping webhook event.")
+            # print(modified_keys)
             # return_values = [200, top_notice,
             #                  top_link, modified_keys["title"], modified_keys["link"], modified_keys["tab"]]
             return_values = [200, top_notice,
                              top_link, modified_keys]
+            print(return_values)
             return return_values
         else:
             return_values = [404, top_notice, top_link, ' ', ' ']
@@ -145,7 +133,7 @@ def notice_title(tab_iterator, notice_iterator, tree):
         return top_notice
     except Exception as e:
         print('TITLE ERROR ' + str(e))
-        sendtelegram(2, AUTH_CHANNEL, '_', 'Got an error finding the notice title.')
+        # sendtelegram(2, AUTH_CHANNEL, '_', 'Got an error finding the notice title.')
 
 
 def notice_link(tab_iterator, notice_iterator, tree):
@@ -217,5 +205,7 @@ def send_webhook_alert(xhash, body):
     Headers = {"X-Hub-Signature": xhash, "Content-Type": "application/json"}
     r = requests.post(url=WEBHOOK_ADDRESS, data=body, headers=Headers)
     print(r)
-    logging.info("Webhook configured.\nBody - ." +
+    print("Webhook configured.\nBody - ." +
                  body + "\nURL - " + WEBHOOK_ADDRESS)
+
+request_time()

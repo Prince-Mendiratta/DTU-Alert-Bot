@@ -198,6 +198,8 @@ def check_status(user_id, usname):
 
 
 async def getDocIdAsync(req_result, client: Client):
+    if req_result["link"] is None:
+        return None
     file_id = await getDocId(req_result["link"], client)
     return file_id
 
@@ -207,8 +209,6 @@ def intitateBroadcast(req_result, client: Client):
     asyncio.set_event_loop(loop)
     file_id = loop.run_until_complete(getDocIdAsync(req_result, client))
     loop.close()
-    if file_id == 0:
-        return
     broadcast(req_result, file_id, client)
 
 
@@ -219,12 +219,25 @@ def broadcast(req_result, file_id, client: Client):
     failed_users = []
     for i in range(0, (total)):
         try:
-            pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\nUnder Tab --> {}\n\nCheers from @DTUAlertBot!".format(
+            children = ''
+            if req_result['children']['titles'] != []:
+                children += 'With Sub Links as:\n'
+                for i in range(req_result['children']['titles']):
+                    try:
+                        children += '{} : {}\n'.format(req_result['children']['titles'][i],req_result['children']['links'][i])
+                    except Exception as e:
+                        print('CHILDREN ERROR - ', str(e))
+                        children = ''
+            pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\n{}Under Tab --> {}\n\nCheers from @DTUAlertBot!".format(
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 req_result["title"],
+                children,
                 req_result["tab"],
             )
-            send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
+            if file_id is None:
+                send_status = sendtelegram(2, broadcast_list[i], file_id, pp)
+            else:
+                send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
             if send_status == 200:
                 i += 1
                 logging.info(
