@@ -26,12 +26,13 @@ from bot import (
     WEBHOOK_INTEGRATION,
     WEBHOOK_ADDRESS,
     AUTH_CHANNEL,
-    logging
+    logging,
+    TG_BOT_TOKEN
 )
-from bot.plugins.broadcast import sendtelegram
 from os import path
 from datetime import datetime
 from lxml import html
+from lxml.etree import tostring
 import hashlib
 import hmac
 import json
@@ -219,3 +220,38 @@ def send_webhook_alert(xhash, body):
     print(r)
     logging.info("Webhook configured.\nBody - ." +
                  body + "\nURL - " + WEBHOOK_ADDRESS)
+
+def sendtelegram(tipe, user_id, notice, caption):
+    if tipe == 1:
+        handler = "Document"
+        pramas = {"chat_id": user_id, "document": notice, "caption": caption}
+    elif tipe == 2:
+        handler = "Message"
+        pramas = {
+            "chat_id": user_id,
+            "text": caption,
+        }
+    elif tipe == 3:
+        handler = "Animation"
+        pramas = {"chat_id": user_id, "animation": notice, "caption": caption}
+    try:
+        token = TG_BOT_TOKEN
+        r = requests.get(
+            "https://api.telegram.org/bot{}/send{}".format(token, handler),
+            params=pramas,
+        )
+        logging.info(r.status_code)
+        if r.status_code == 200 and r.json()["ok"]:
+            return 200
+        elif r.status_code == 403:
+            logging.info(
+                "[*] Alert was not sent to {} due to being blocked. ".format(user_id))
+            return 403
+        else:
+            logging.info(
+                "[*] Alert was not sent to {}. Request - {} ".format(user_id, r.json()))
+            raise Exception
+    except Exception as e:
+        logging.error(e)
+        logging.info("[*] Could not send telegram message.")
+        return 69
