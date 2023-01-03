@@ -204,15 +204,15 @@ async def broadcast(req_result, file_id, client: Client):
     all_users = user_list()
     children = ''
     if req_result['children']['titles'] != []:
-        children += 'With Sub Links as:\n'
+        children += '🖇 With Sub Links as:\n'
         for i in range(len(req_result['children']['titles'])):
             try:
-                children += '{} : {}\n'.format(
+                children += '🐼 {} : {}\n'.format(
                     req_result['children']['titles'][i], req_result['children']['links'][i])
             except Exception as e:
                 print('CHILDREN ERROR - ', str(e))
                 children = ''
-    broadcast_msg = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\n{}Under Tab --> {}\n\nCheers from @DTUAlertBot!".format(
+    broadcast_msg = "📬 __[{}]: DTU Site has been Updated!__\n\n🌀 __Latest Notice Title__ - \n**{}**\n\n{}📍__Under Tab__ --> {}\n\n🔮 Cheers from @DTUAlertBot!".format(
         datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         req_result["title"],
         children,
