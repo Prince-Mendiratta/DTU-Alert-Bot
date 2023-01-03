@@ -1,33 +1,39 @@
-import asyncio
-from datetime import datetime, timedelta
-import os.path
-import os
-import random
-import string
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# (c) Prince Mendiratta
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import time
-import traceback
-
-import aiofiles
-from pyrogram.errors import (
-    FloodWait,
-    InputUserDeactivated,
-    PeerIdInvalid,
-    UserIsBlocked,
-)
-from pyrogram import Client, filters
-from pyrogram.types import Message
-
+import sys
+import os
+import os.path
 import requests
 import threading
+import subprocess
+import asyncio
+from pyrogram import Client, filters
+from pyrogram.types import Message
 from bot import AUTH_CHANNEL, REQUEST_INTERVAL, TG_BOT_TOKEN, MONGO_URL, COMMM_AND_PRE_FIX
+from os import path
 from bot.hf.request import request_time
 from bot.mongodb.users import user_list, remove_client_from_db
-from bot import logging
+from datetime import datetime
 from pyrogram.errors.exceptions import UserIsBlocked, ChatWriteForbidden
+from bot import logging
 from requests.adapters import HTTPAdapter, Retry
 from requests.exceptions import Timeout
 
-broadcast_ids = {}
 
 @Client.on_message(
     filters.command("init", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
@@ -75,6 +81,34 @@ def get_mod(client: Client, message: Message):
         logging.error(e)
         os.remove("bot/hf/recorded_status.json")
         client.send_message(AUTH_CHANNEL, "Got fatal error - " + str(e))
+
+
+# def getDocId(notice):
+#     try:
+#         print("getting doc id for - " + notice)
+#         token = TG_BOT_TOKEN
+#         r = requests.get(
+#             "https://api.telegram.org/bot{}/sendDocument".format(token),
+#             params={
+#                 "chat_id": AUTH_CHANNEL,
+#                 "document": notice,
+#                 "caption": "[Logs] New Notice.",
+#             },
+#         )
+#         if r.status_code == 200 and r.json()["ok"]:
+#             doc_file_id = r.json()["result"]["document"]["file_id"]
+#             return doc_file_id
+#         else:
+#             logging.error(str(r.json()))
+#             raise Exception
+#     except Exception as e:
+#         logging.error(e)
+#         logging.info(
+#             "[*] [{}]: Error Sending Logs File!!. - {}".format(datetime.now(), e))
+#         doc_file_id = 0
+#         sendtelegram(2, AUTH_CHANNEL, "_", e)
+#         sys.exit()
+#         return doc_file_id
 
 # Use local file to send alert
 async def getDocId(notice, client: Client):
@@ -175,33 +209,14 @@ def intitateBroadcast(req_result, client: Client):
     asyncio.set_event_loop(loop)
     file_id = loop.run_until_complete(getDocIdAsync(req_result, client))
     loop.close()
-    startBroadcast(req_result, file_id, client)
-
-def startBroadcast(req_result, file_id, client):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(broadcast(req_result, file_id, client))
-    loop.close()
-
-async def send_msg(user_id, message, client):
-    try:
-        await client.send_message(chat_id=user_id, text=message)
-        return 200, None
-    except FloodWait as e:
-        await asyncio.sleep(e.x)
-        return send_msg(user_id, message)
-    except InputUserDeactivated:
-        return 400, f"{user_id} : deactivated\n"
-    except UserIsBlocked:
-        return 400, f"{user_id} : blocked the bot\n"
-    except PeerIdInvalid:
-        return 400, f"{user_id} : user id invalid\n"
-    except Exception:
-        return 500, f"{user_id} : {traceback.format_exc()}\n"
+    broadcast(req_result, file_id, client)
 
 
-async def broadcast(req_result, file_id, client: Client):
-    all_users = user_list()
+def broadcast(req_result, file_id, client: Client):
+    broadcast_list = user_list()
+    total = len(broadcast_list)
+    failed = 0
+    failed_users = []
     children = ''
     if req_result['children']['titles'] != []:
         children += 'With Sub Links as:\n'
@@ -212,66 +227,38 @@ async def broadcast(req_result, file_id, client: Client):
             except Exception as e:
                 print('CHILDREN ERROR - ', str(e))
                 children = ''
-    broadcast_msg = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\n{}Under Tab --> {}\n\nCheers from @DTUAlertBot!".format(
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        req_result["title"],
-        children,
-        req_result["tab"],
-    )
-    while True:
-        broadcast_id = "".join([random.choice(string.ascii_letters) for i in range(3)])
-        if not broadcast_ids.get(broadcast_id):
-            break
-    out = await client.send_message(AUTH_CHANNEL,
-        text=f"Broadcast Started! You will be notified with log file when all the users are notified."
-    )
-    out = await client.send_message(AUTH_CHANNEL,
-        text=broadcast_msg
-    )
-    start_time = time.time()
-    total_users = len(all_users)
-    done = 0
-    failed = 0
-    success = 0
-    broadcast_ids[broadcast_id] = dict(
-        total=total_users, current=done, failed=failed, success=success
-    )
-    async with aiofiles.open("broadcast.txt", "w") as broadcast_log_file:
-        for user in all_users:
-            if file_id is not None:
-                await client.send_document(int(user), file_id)
-            sts, msg = await send_msg(user_id=int(user), message=broadcast_msg, client=client)
-            if msg is not None:
-                await broadcast_log_file.write(msg)
-            if sts == 200:
-                success += 1
+    for i in range(0, (total)):
+        try:
+            pp = "[{}]: DTU Site has been Updated!\n\nLatest Notice Title - \n{}\n\n{}Under Tab --> {}\n\nCheers from @DTUAlertBot!".format(
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                req_result["title"],
+                children,
+                req_result["tab"],
+            )
+            if file_id is None:
+                send_status = sendtelegram(2, broadcast_list[i], file_id, pp)
+            else:
+                send_status = sendtelegram(1, broadcast_list[i], file_id, pp)
+            if send_status == 200:
+                i += 1
                 logging.info(
-                    "[*] Alert Sent to {}/{} people.".format(done, total_users))
-            else:
+                    "[*] Alert Sent to {}/{} people.".format(i, total))
+                time.sleep(0.3)
+            elif send_status == 403:
                 failed += 1
-            # if sts == 400:
-            #     await db.delete_user(user)
-            done += 1
-            if broadcast_ids.get(broadcast_id) is None:
-                break
+                i += 1
+                failed_users.append(broadcast_list[i])
+                time.sleep(0.18)
             else:
-                broadcast_ids[broadcast_id].update(
-                    dict(current=done, failed=failed, success=success)
-                )
-    if broadcast_ids.get(broadcast_id):
-        broadcast_ids.pop(broadcast_id)
-    completed_in = timedelta(seconds=int(time.time() - start_time))
-    await asyncio.sleep(3)
-    await out.delete()
-    if failed == 0:
-        await client.send_message(
-            AUTH_CHANNEL,
-            text=f"broadcast completed in `{completed_in}`\n\nTotal users {total_users}.\nTotal done {done}, {success} success and {failed} failed."
-        )
-    else:
-        await client.send_document(
-            AUTH_CHANNEL,
-            document="broadcast.txt",
-            caption=f"broadcast completed in `{completed_in}`\n\nTotal users {total_users}.\nTotal done {done}, {success} success and {failed} failed."
-        )
-    os.remove("broadcast.txt")
+                continue
+        except Exception as e:
+            logging.error("[*] {}".format(e))
+
+    time.sleep(4)
+    done = "[*] Notice Alert Sent to {}/{} people.\n {} user(s) were not sent the message.".format(
+        (int(total - failed)), total, failed
+    )
+    logging.critical(done)
+    sendtelegram(
+        3, AUTH_CHANNEL, "https://telegra.ph/file/d88f31ee50c8362e86aa8.mp4", done
+    )
