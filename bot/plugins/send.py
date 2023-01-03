@@ -12,6 +12,7 @@ from bot import (
     WEBHOOK_ADDRESS,
     WEBHOOK_INTEGRATION
 )
+from bot.hf.request import request_time
 from bot.mongodb.users import user_list, remove_client_from_db
 from .broadcast import getDocId, sendtelegram
 from datetime import datetime
@@ -84,6 +85,37 @@ async def wa_missed_noti(client: Client, message: Message):
             chat_id=AUTH_CHANNEL,
             text="Format:\n/send|notice_url|notice_title|notice_tab",
         )
+        return
+
+@Client.on_message(
+    filters.command("rwasend", COMMM_AND_PRE_FIX) & filters.chat(AUTH_CHANNEL)
+)
+async def wa_missed_notif(client: Client, message: Message):
+    inputm = message.text
+    try:
+        comm, tab_index, link_index, tab = inputm.split("|")
+        print(inputm)
+        notice = request_time(client, {"tab_index": str(tab_index), "link_index": str(link_index), "tab": str(tab)})
+        
+        if(WEBHOOK_INTEGRATION):
+            try:
+                data = {
+                    "notice": [notice]
+                }
+                xhash = sign_request(json.dumps(
+                    data, separators=(',', ':')))
+                send_webhook_alert(xhash, json.dumps(
+                    data, separators=(',', ':')))
+            except Exception as e:
+                logging.error(e)
+        else:
+            logging.info("Webhook not configured. Skipping webhook event.")
+    except Exception as e:
+        await client.send_message(
+            chat_id=AUTH_CHANNEL,
+            text="Format:\n/send|tab_index|notice_index|tab_name",
+        )
+        print(e)
         return
 
 def send(url, title, tab, file_id):

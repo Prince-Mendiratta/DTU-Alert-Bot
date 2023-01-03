@@ -38,7 +38,7 @@ import hmac
 import json
 
 
-def request_time(client: Client):
+def request_time(client: Client, get_tree={}):
     print("[*] Checking DTU Website for notices now....")
     try:
         s = requests.Session()
@@ -52,6 +52,19 @@ def request_time(client: Client):
         return [403]
 
     tree = html.fromstring(r.content)
+    if get_tree:
+        title = notice_title(get_tree["tab_index"], get_tree["link_index"], tree)
+        rest = notice_link(get_tree["tab_index"], get_tree["link_index"], tree)
+        notice = {
+            "title": title,
+            "link": rest[0],
+            "children": {
+                "titles": rest[2],
+                "links": rest[1]
+            },
+            "tab": get_tree["tab"]
+        }
+        return notice
     try:
         top_notice = tree.xpath(
             '//*[@id="tab4"]/div[1]/ul/li[1]/h6/a')[0].text_content().strip().replace("\u201c", "").replace("\u201d", "")
