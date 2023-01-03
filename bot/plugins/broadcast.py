@@ -239,7 +239,11 @@ async def broadcast(req_result, file_id, client: Client):
     async with aiofiles.open("broadcast.txt", "w") as broadcast_log_file:
         for user in all_users:
             if file_id is not None:
-                await client.send_document(int(user), file_id)
+                try:
+                    await client.send_document(int(user), file_id)
+                except Exception as e:
+                    #ignore, handled by message
+                    continue
             sts, msg = await send_msg(user_id=int(user), message=broadcast_msg, client=client)
             if msg is not None:
                 await broadcast_log_file.write(msg)
