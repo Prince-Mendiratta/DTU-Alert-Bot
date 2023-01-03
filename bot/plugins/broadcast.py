@@ -222,7 +222,7 @@ def broadcast(req_result, file_id, client: Client):
             children = ''
             if req_result['children']['titles'] != []:
                 children += 'With Sub Links as:\n'
-                for i in range(req_result['children']['titles']):
+                for i in range(len(req_result['children']['titles'])):
                     try:
                         children += '{} : {}\n'.format(req_result['children']['titles'][i],req_result['children']['links'][i])
                     except Exception as e:
