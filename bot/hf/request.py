@@ -187,7 +187,7 @@ def notice_link(tab_iterator, notice_iterator, tree):
                     if child != '' and 'Date' not in child:
                         children.append(child)
             else:
-                ele = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]'.format(tab_iterator, notice_iterator))[0]
+                ele = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6'.format(tab_iterator, notice_iterator))[0]
                 for x in range(1,len(ele)):
                     if '<!--'.encode() in tostring(ele[x]):
                         continue
