@@ -45,7 +45,7 @@ def request_time(client: Client, get_tree={}):
         retries = Retry(total=500,
                         backoff_factor=0.1,)
         s.mount('http://', HTTPAdapter(max_retries=retries))
-        r = s.get(('http://dtu.ac.in/'), timeout=25)
+        r = s.get(('http://dtu.ac.in/'))
     except Timeout:
         print("[{}]: The request timed out.".format(
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
