@@ -94,7 +94,7 @@ def request_time(client: Client, get_tree={}):
         for ele in full_list:
             if ele.tag == 'li' and ele.get('class', None) is None:
                 max_range += 1
-        max_range = min(max_range, 15)
+        max_range = min(max_range, 35)
         for notice_iterator in range(1, max_range):
             try:
                 title = notice_title(tab_iterator, notice_iterator, tree)
