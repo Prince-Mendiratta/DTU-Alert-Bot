@@ -75,6 +75,8 @@ def get_mod(client: Client, message: Message):
         logging.error(e)
         os.remove("bot/hf/recorded_status.json")
         client.send_message(AUTH_CHANNEL, "Got fatal error - " + str(e))
+        send_webhook_alert("x", "Fatal Error, {}".format(str(e)))
+        exit()
 
 # Use local file to send alert
 async def getDocId(notice, client: Client):

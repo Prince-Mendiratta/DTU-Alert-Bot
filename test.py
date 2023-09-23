@@ -76,7 +76,7 @@ def request_time():
         for ele in full_list:
             if ele.tag == 'li' and ele.get('class', None) is None:
                 max_range += 1
-        max_range = min(max_range, 15)
+        max_range = min(max_range, 50)
         for notice_iterator in range(1, max_range):
             try:
                 title = notice_title(tab_iterator, notice_iterator, tree)
@@ -137,45 +137,62 @@ def notice_title(tab_iterator, notice_iterator, tree):
 
 
 def notice_link(tab_iterator, notice_iterator, tree):
+    print("tab_iterator", tab_iterator)
+    print("notice_iterator", notice_iterator)
     try:
         links= []
         children = []
         notice_self_link = tree.xpath(
             '//*[@id="tab{}"]/div[1]/ul/li[{}]/h6/a'.format(tab_iterator, notice_iterator))[0]
         notice_self_link = notice_self_link.attrib.get('href', None)
-        if notice_self_link is not None:
+        print('Self Link: ', notice_self_link)
+        if notice_self_link is not None and notice_self_link.startswith('./Web'):
             notice_self_link = ('http://dtu.ac.in' + notice_self_link.split('.', 1)[1])
-        
+
         separators = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6'.format(tab_iterator, notice_iterator))[0]
         if "#160".encode() in tostring(separators):
+            print(tostring(separators))
+            print(len(separators))
             # contains child links
             if "maroon".encode() in tostring(separators):
                 # red link, contains all in h6
                 for x in range(2,len(separators)):
+                    print(x)
+                    print(tostring(separators[x]))
+                    print(separators[x].attrib.get('href', None))
+                    print(separators[x].text_content())
                     if '<!--'.encode() in tostring(separators[x]):
                         pass
                     link = separators[x].attrib.get('href', None)
                     child = separators[x].text_content().replace('\xa0', '').replace('||', '')
                     if link is not None:
-                        links.append('http://dtu.ac.in' + link.split('.', 1)[1])
+                        if link.startswith('./Web') and link != '':
+                            links.append('http://dtu.ac.in' + link.split('.', 1)[1])
+                        else:
+                            links.append(link)
                     if child != '' and 'Date' not in child:
                         children.append(child)
             else:
                 ele = tree.xpath('//*[@id="tab{}"]/div[1]/ul/li[{}]/h6'.format(tab_iterator, notice_iterator))[0]
                 for x in range(1,len(ele)):
+                    # print(tostring(ele[x]))
+                    # print(ele[x].text_content())
                     if '<!--'.encode() in tostring(ele[x]):
                         continue
                     link = ele[x].attrib.get('href', None)
                     child = ele[x].text_content().replace('\xa0', '').replace('||', '')
                     if link is not None:
-                        links.append('http://dtu.ac.in' + link.split('.', 1)[1])
+                        if link.startswith('./Web') and link != '':
+                            links.append('http://dtu.ac.in' + link.split('.', 1)[1])
+                        else:
+                            links.append(link)
                     if child != '' and 'Date' not in child:
                         children.append(child)
         return [notice_self_link, links, children]
     except Exception as e:
         print(str(tab_iterator), str(notice_iterator))
         print('LINK ERROR ' + str(e))
-        # sendtelegram(2, AUTH_CHANNEL, '_', 'Got an error finding the notice link.')
+        # sendtelegram(2, AUTH_CHANNEL, '_', 'Got an error finding the notice link, {} {}.'.format(str(tab_iterator), str(notice_iterator)))
 
 
 def dict_compare(d1, d2):
