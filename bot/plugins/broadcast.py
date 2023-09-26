@@ -73,6 +73,7 @@ def get_mod(client: Client, message: Message):
         return mes2
     except Exception as e:
         logging.error(e)
+        logging.info(req_result)
         os.remove("bot/hf/recorded_status.json")
         client.send_message(AUTH_CHANNEL, "Got fatal error - " + str(e))
         send_webhook_alert("x", "Fatal Error, {}".format(str(e)))
@@ -281,3 +282,10 @@ async def broadcast(req_result, file_id, client: Client):
             caption=f"broadcast completed in `{completed_in}`\n\nTotal users {total_users}.\nTotal done {done}, {success} success and {failed} failed."
         )
     os.remove("broadcast.txt")
+
+def send_webhook_alert(xhash, body):
+    Headers = {"X-Hub-Signature": xhash, "Content-Type": "application/json"}
+    r = requests.post(url=WEBHOOK_ADDRESS, data=body, headers=Headers)
+    print(r)
+    logging.info("Webhook configured.\nBody - ." +
+                 body + "\nURL - " + WEBHOOK_ADDRESS)
